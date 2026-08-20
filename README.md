@@ -18,7 +18,8 @@ Consulter :
 
 - [la feuille de route](./docs/ROADMAP.md) pour l'avancement étape par étape ;
 - [la recherche initiale](./docs/RESEARCH.md) pour les décisions techniques et juridiques ;
-- [l'architecture](./docs/ARCHITECTURE.md) pour les invariants du pipeline actuel.
+- [l'architecture](./docs/ARCHITECTURE.md) pour les invariants du pipeline actuel ;
+- [la recherche juridique](./docs/LEGAL_RESEARCH.md) et [la checklist de release](./docs/RELEASE_CHECKLIST.md) pour les règles de distribution.
 
 ## Développement
 
@@ -43,4 +44,4 @@ Le résultat local est ignoré par Git.
 
 ## Licence
 
-Aucune licence de code n'a encore été choisie : `package.json` porte donc la valeur `UNLICENSED`. Aucun code provenant d'UHC ou d'un autre mod n'est copié dans ce dépôt.
+Aucune licence de code n'a encore été choisie : `package.json` porte donc la valeur `UNLICENSED`. Aucun code provenant d'UHC ou d'un autre mod n'est copié dans ce dépôt. Les options sont présentées dans [la décision de licence](./docs/LICENSING_DECISION.md).

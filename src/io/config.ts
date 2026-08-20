@@ -1,4 +1,5 @@
 import type {
+  ContentScope,
   DistributionPolicy,
   MappingEvidence,
   PageMapping,
@@ -29,15 +30,55 @@ export async function readOverrides(path: string): Promise<PageOverride[]> {
 export async function readDistributionPolicy(path: string): Promise<DistributionPolicy> {
   const value = await readJsonFile(path)
   assertRecord(value, "distributionPolicy")
+  if (value.schemaVersion !== 1) {
+    throw new InputValidationError("distributionPolicy.schemaVersion doit valoir 1")
+  }
+  if (value.mode !== "tools-only" && value.mode !== "content") {
+    throw new InputValidationError("distributionPolicy.mode est invalide")
+  }
   if (typeof value.contentDistributionAllowed !== "boolean") {
     throw new InputValidationError("distributionPolicy.contentDistributionAllowed doit être un booléen")
   }
-  if (value.decisionReference !== null && typeof value.decisionReference !== "string") {
-    throw new InputValidationError("distributionPolicy.decisionReference doit être une chaîne ou null")
+  assertRecord(value.decision, "distributionPolicy.decision")
+  if (value.decision.status !== "not-authorized" && value.decision.status !== "authorized") {
+    throw new InputValidationError("distributionPolicy.decision.status est invalide")
   }
+  if (value.decision.reference !== null && typeof value.decision.reference !== "string") {
+    throw new InputValidationError("distributionPolicy.decision.reference doit être une chaîne ou null")
+  }
+  if (value.decision.decidedAt !== null && typeof value.decision.decidedAt !== "string") {
+    throw new InputValidationError("distributionPolicy.decision.decidedAt doit être une chaîne ou null")
+  }
+  assertArray(value.decision.scope, "distributionPolicy.decision.scope")
+  const scope = value.decision.scope.map((entry) => {
+    if (entry !== "translation-text" && entry !== "translated-assets") {
+      throw new InputValidationError(`Périmètre de distribution inconnu: ${String(entry)}`)
+    }
+    return entry as ContentScope
+  })
+
+  const authorized = value.decision.status === "authorized"
+  if (value.contentDistributionAllowed !== authorized) {
+    throw new InputValidationError(
+      "La permission de contenu doit être cohérente avec distributionPolicy.decision.status",
+    )
+  }
+  if ((value.mode === "content") !== authorized) {
+    throw new InputValidationError(
+      "Le mode content n'est valide qu'avec une décision autorisée, et réciproquement",
+    )
+  }
+
   return {
+    schemaVersion: 1,
+    mode: value.mode,
     contentDistributionAllowed: value.contentDistributionAllowed,
-    decisionReference: value.decisionReference,
+    decision: {
+      status: value.decision.status,
+      reference: value.decision.reference,
+      decidedAt: value.decision.decidedAt,
+      scope,
+    },
   }
 }
 

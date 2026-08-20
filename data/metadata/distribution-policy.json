@@ -1,4 +1,11 @@
 {
+  "schemaVersion": 1,
+  "mode": "tools-only",
   "contentDistributionAllowed": false,
-  "decisionReference": null
+  "decision": {
+    "status": "not-authorized",
+    "reference": null,
+    "decidedAt": null,
+    "scope": []
+  }
 }

@@ -1,11 +1,16 @@
 import assert from "node:assert/strict"
-import { mkdtemp, readFile, rm } from "node:fs/promises"
+import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises"
 import { tmpdir } from "node:os"
 import { join, resolve } from "node:path"
 import test from "node:test"
 
 import { LocalJsonSource } from "../adapters/local-json/index.js"
-import { DistributionBlockedError, MappingError, OverrideConflictError } from "../src/domain/errors.js"
+import {
+  DistributionBlockedError,
+  InputValidationError,
+  MappingError,
+  OverrideConflictError,
+} from "../src/domain/errors.js"
 import { writeUhcMod } from "../src/generator/uhc-mod.js"
 import { readDistributionPolicy, readMappings, readOverrides } from "../src/io/config.js"
 import { applyOverrides } from "../src/overrides/apply-overrides.js"
@@ -92,4 +97,75 @@ test("applique un override lié au hash et bloque un changement amont", async ()
 test("bloque le packaging de contenu avec la politique par défaut", async () => {
   const policy = await readDistributionPolicy(resolve("data/metadata/distribution-policy.json"))
   assert.throws(() => assertContentDistributionAllowed(policy), DistributionBlockedError)
+})
+
+test("exige une décision datée, référencée et couvrant le texte", () => {
+  assert.throws(() => assertContentDistributionAllowed({
+    schemaVersion: 1,
+    mode: "content",
+    contentDistributionAllowed: true,
+    decision: {
+      status: "authorized",
+      reference: null,
+      decidedAt: "2026-08-20",
+      scope: ["translation-text"],
+    },
+  }), DistributionBlockedError)
+
+  assert.throws(() => assertContentDistributionAllowed({
+    schemaVersion: 1,
+    mode: "content",
+    contentDistributionAllowed: true,
+    decision: {
+      status: "authorized",
+      reference: "docs/LEGAL_RESEARCH.md#autorisation",
+      decidedAt: "date inconnue",
+      scope: ["translation-text"],
+    },
+  }), DistributionBlockedError)
+
+  assert.throws(() => assertContentDistributionAllowed({
+    schemaVersion: 1,
+    mode: "content",
+    contentDistributionAllowed: true,
+    decision: {
+      status: "authorized",
+      reference: "docs/LEGAL_RESEARCH.md#autorisation",
+      decidedAt: "2026-08-20",
+      scope: ["translated-assets"],
+    },
+  }), DistributionBlockedError)
+
+  assert.doesNotThrow(() => assertContentDistributionAllowed({
+    schemaVersion: 1,
+    mode: "content",
+    contentDistributionAllowed: true,
+    decision: {
+      status: "authorized",
+      reference: "docs/LEGAL_RESEARCH.md#autorisation",
+      decidedAt: "2026-08-20",
+      scope: ["translation-text"],
+    },
+  }))
+})
+
+test("refuse une politique JSON contradictoire", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "hsfr-policy-"))
+  const path = join(directory, "policy.json")
+  try {
+    await writeFile(path, JSON.stringify({
+      schemaVersion: 1,
+      mode: "tools-only",
+      contentDistributionAllowed: true,
+      decision: {
+        status: "not-authorized",
+        reference: null,
+        decidedAt: null,
+        scope: [],
+      },
+    }), "utf8")
+    await assert.rejects(() => readDistributionPolicy(path), InputValidationError)
+  } finally {
+    await rm(directory, { recursive: true, force: true })
+  }
 })

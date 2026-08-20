@@ -20,7 +20,7 @@ Cette feuille de route transforme le plan général en étapes vérifiables. Les
 |---:|---|:---:|---|
 | 0 | Investigation initiale | ✅ | M0 — recherche |
 | 1 | Socle et vertical slice artificiel | ✅ | M1 — preuve technique |
-| 2 | Cadre juridique et gouvernance | ⬜ | M2 — MVP juridiquement sûr |
+| 2 | Cadre juridique et gouvernance | 🟡 | M2 — MVP juridiquement sûr |
 | 3 | Adaptateur MSPFA et import local | ⬜ | M2 — MVP juridiquement sûr |
 | 4 | Snapshots et mises à jour incrémentales | ⬜ | M2 — MVP juridiquement sûr |
 | 5 | Mapping MSPFA ↔ Homestuck ↔ UHC | ⬜ | M3 — alpha locale |
@@ -105,34 +105,36 @@ Un mod prêt à installer contenant la traduction ne pourra être publié qu'apr
 
 **Critère de sortie :** le flux source locale → canonique → mapping → override → validation → mod fonctionne sans contenu protégé. **Atteint.**
 
-## Phase 2 — Cadre juridique et gouvernance ⬜
+## Phase 2 — Cadre juridique et gouvernance 🟡
 
 ### 2.1 Documents juridiques du dépôt
 
-- [ ] Créer `docs/LEGAL_RESEARCH.md` avec les faits, dates et sources.
-- [ ] Créer `THIRD_PARTY.md` en séparant code, traduction, Homestuck et UHC.
-- [ ] Créer `NOTICE` avec les attributions obligatoires.
-- [ ] Créer `CREDITS.md` avec les crédits exacts de la traduction.
+- [x] Créer `docs/LEGAL_RESEARCH.md` avec les faits, dates et sources.
+- [x] Créer `THIRD_PARTY.md` en séparant code, traduction, Homestuck et UHC.
+- [x] Créer `NOTICE` avec les attributions obligatoires.
+- [x] Créer `CREDITS.md` avec les crédits publics actuellement observables.
 - [ ] Choisir avec le propriétaire du dépôt la licence du code original.
 - [ ] Remplacer `UNLICENSED` seulement après cette décision.
-- [ ] Vérifier qu'aucune licence de code n'est présentée comme licence du contenu.
+- [x] Vérifier qu'aucune licence de code n'est présentée comme licence du contenu.
 
 ### 2.2 Autorisation de la traduction
 
-- [ ] Identifier et confirmer les responsables actuels de la traduction.
-- [ ] Préparer une demande d'autorisation claire.
+- [x] Identifier les pseudonymes et rôles publiquement affichés.
+- [ ] Confirmer que les responsables identifiés peuvent autoriser chaque contribution.
+- [x] Préparer une demande d'autorisation claire.
 - [ ] Demander séparément les droits concernant le texte et les images.
 - [ ] Documenter la réponse sans publier de données personnelles inutiles.
-- [ ] Lister les contributions de tiers mentionnées dans les crédits MSPFA.
+- [x] Lister les contributions de tiers mentionnées dans les crédits MSPFA.
 - [ ] Déterminer si les permissions reçues couvrent les mises à jour futures.
-- [ ] Maintenir `contentDistributionAllowed: false` sans preuve suffisante.
+- [x] Maintenir `contentDistributionAllowed: false` sans preuve suffisante.
 
 ### 2.3 Verrou de release
 
-- [ ] Définir un schéma versionné pour la décision de distribution.
-- [ ] Exiger une référence de preuve non vide.
-- [ ] Ajouter une checklist de release juridique automatisée.
-- [ ] Tester que la CI ne peut pas produire accidentellement un package de contenu.
+- [x] Définir un schéma versionné pour la décision de distribution.
+- [x] Exiger une référence, une date et un périmètre cohérents.
+- [x] Ajouter une checklist de release juridique versionnée.
+- [x] Tester que le code refuse un package sans décision complète.
+- [ ] Automatiser la checklist et le contrôle du package dans la CI.
 
 **Critère de sortie :** le dépôt peut évoluer et publier ses outils sans ambiguïté juridique. L'absence d'autorisation ne bloque pas le MODE B, mais bloque toujours le MODE A.
 

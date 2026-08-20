@@ -76,9 +76,18 @@ export interface PageOverride {
   changes: TranslationChanges
 }
 
+export type ContentScope = "translation-text" | "translated-assets"
+
 export interface DistributionPolicy {
+  schemaVersion: 1
+  mode: "tools-only" | "content"
   contentDistributionAllowed: boolean
-  decisionReference: string | null
+  decision: {
+    status: "not-authorized" | "authorized"
+    reference: string | null
+    decidedAt: string | null
+    scope: ContentScope[]
+  }
 }
 
 export interface GeneratedTranslation {
