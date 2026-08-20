@@ -1,0 +1,97 @@
+export type PageClassification =
+  | "TEXT_TRANSLATABLE"
+  | "LOG_TRANSLATABLE"
+  | "IMAGE_TRANSLATION_REQUIRED"
+  | "FLASH_TRANSLATION_REQUIRED"
+  | "INTERACTIVE_TRANSLATION_REQUIRED"
+  | "UNSUPPORTED"
+
+export interface SourcePage {
+  pageNumber: number
+  title?: string
+  body?: string
+  modifiedAt?: string
+  nextPageNumbers: number[]
+  classifications: PageClassification[]
+  logLabel?: "PESTERLOG" | "DIALOGLOG" | "SPRITELOG"
+}
+
+export interface TranslationSourceSnapshot {
+  provider: string
+  adventureId: string
+  sourceRevision?: string
+  pages: SourcePage[]
+}
+
+export interface TranslationSource {
+  load(): Promise<TranslationSourceSnapshot>
+}
+
+export interface MappingEvidence {
+  type: "asset-id" | "manual" | "navigation" | "title" | "fixture"
+  value: string
+}
+
+export interface PageMapping {
+  mspfaPageNumber: number
+  homestuckOrdinal: number
+  uhcMspaId: string
+  status: "proposed" | "verified" | "rejected"
+  confidence: "exact" | "high" | "ambiguous"
+  evidence: MappingEvidence[]
+  lastVerified?: string
+}
+
+export interface CanonicalTranslationPage {
+  id: {
+    provider: string
+    adventureId: string
+    mspfaPageNumber: number
+  }
+  source: {
+    modifiedAt?: string
+    rawHash: string
+    normalizedHash: string
+  }
+  translation: {
+    title?: string
+    content?: string
+  }
+  navigation: {
+    nextSourcePages: number[]
+  }
+  classifications: PageClassification[]
+  mapping?: PageMapping
+}
+
+export interface TranslationChanges {
+  title?: string
+  content?: string
+}
+
+export interface PageOverride {
+  uhcMspaId: string
+  reason: string
+  appliesToNormalizedHash: string
+  changes: TranslationChanges
+}
+
+export interface DistributionPolicy {
+  contentDistributionAllowed: boolean
+  decisionReference: string | null
+}
+
+export interface GeneratedTranslation {
+  [uhcMspaId: string]: TranslationChanges
+}
+
+export interface PipelineInput {
+  source: TranslationSource
+  mappings: PageMapping[]
+  overrides: PageOverride[]
+}
+
+export interface PipelineResult {
+  pages: CanonicalTranslationPage[]
+  translation: GeneratedTranslation
+}

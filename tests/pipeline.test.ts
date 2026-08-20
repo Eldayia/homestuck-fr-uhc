@@ -1,0 +1,95 @@
+import assert from "node:assert/strict"
+import { mkdtemp, readFile, rm } from "node:fs/promises"
+import { tmpdir } from "node:os"
+import { join, resolve } from "node:path"
+import test from "node:test"
+
+import { LocalJsonSource } from "../adapters/local-json/index.js"
+import { DistributionBlockedError, MappingError, OverrideConflictError } from "../src/domain/errors.js"
+import { writeUhcMod } from "../src/generator/uhc-mod.js"
+import { readDistributionPolicy, readMappings, readOverrides } from "../src/io/config.js"
+import { applyOverrides } from "../src/overrides/apply-overrides.js"
+import { runPipeline } from "../src/pipeline/build-pipeline.js"
+import { assertContentDistributionAllowed } from "../src/policy/distribution.js"
+
+const fixtures = resolve("tests/fixtures")
+
+async function fixtureInput() {
+  const [mappings, overrides] = await Promise.all([
+    readMappings(join(fixtures, "mapping.json")),
+    readOverrides(join(fixtures, "overrides.json")),
+  ])
+  return {
+    source: new LocalJsonSource(join(fixtures, "source.json")),
+    mappings,
+    overrides,
+  }
+}
+
+test("exécute le vertical slice sur dix pages artificielles", async () => {
+  const result = await runPipeline(await fixtureInput())
+
+  assert.equal(result.pages.length, 10)
+  assert.equal(Object.keys(result.translation).length, 10)
+  assert.equal(result.translation["001901"]?.title, "==&gt; Démonstration 1")
+  assert.match(result.translation["001903"]?.content ?? "", /^\|PESTERLOG\|/)
+  assert.equal(result.translation["007568"]?.content, "aLtErNaNcE volontaire !!! 3xactement conservée.")
+})
+
+test("génère deux sorties identiques et ne remplace jamais l'objet page UHC", async () => {
+  const result = await runPipeline(await fixtureInput())
+  const first = await mkdtemp(join(tmpdir(), "hsfr-first-"))
+  const second = await mkdtemp(join(tmpdir(), "hsfr-second-"))
+
+  try {
+    await writeUhcMod(first, result.translation)
+    await writeUhcMod(second, result.translation)
+    const firstJson = await readFile(join(first, "translation.json"), "utf8")
+    const secondJson = await readFile(join(second, "translation.json"), "utf8")
+    const mod = await readFile(join(first, "mod.js"), "utf8")
+
+    assert.equal(firstJson, secondJson)
+    assert.match(mod, /page\.title = patch\.title/)
+    assert.match(mod, /page\.content = patch\.content/)
+    assert.doesNotMatch(mod, /archive\.mspa\.story\[id\]\s*=/)
+  } finally {
+    await rm(first, { recursive: true, force: true })
+    await rm(second, { recursive: true, force: true })
+  }
+})
+
+test("bloque les mappings ambigus", async () => {
+  const input = await fixtureInput()
+  const first = input.mappings[0]
+  assert.ok(first)
+  input.mappings[0] = { ...first, status: "proposed", confidence: "ambiguous" }
+
+  await assert.rejects(() => runPipeline(input), MappingError)
+})
+
+test("applique un override lié au hash et bloque un changement amont", async () => {
+  const result = await runPipeline(await fixtureInput())
+  const first = result.pages[0]
+  assert.ok(first?.mapping)
+  const mapping = first.mapping
+
+  const applied = applyOverrides(result.pages, [{
+    uhcMspaId: mapping.uhcMspaId,
+    reason: "Test de compatibilité artificiel",
+    appliesToNormalizedHash: first.source.normalizedHash,
+    changes: { title: "Titre technique artificiel" },
+  }])
+  assert.equal(applied[0]?.translation.title, "Titre technique artificiel")
+
+  assert.throws(() => applyOverrides(result.pages, [{
+    uhcMspaId: mapping.uhcMspaId,
+    reason: "Test de conflit artificiel",
+    appliesToNormalizedHash: "sha256:ancien",
+    changes: { title: "Ne doit pas être appliqué" },
+  }]), OverrideConflictError)
+})
+
+test("bloque le packaging de contenu avec la politique par défaut", async () => {
+  const policy = await readDistributionPolicy(resolve("data/metadata/distribution-policy.json"))
+  assert.throws(() => assertContentDistributionAllowed(policy), DistributionBlockedError)
+})

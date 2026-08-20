@@ -1,0 +1,80 @@
+{
+  "provider": "local-json",
+  "adventureId": "synthetic-fixture",
+  "sourceRevision": "fixture-v1",
+  "pages": [
+    {
+      "pageNumber": 1,
+      "title": "==> Démonstration 1",
+      "body": "Une page artificielle très simple.",
+      "nextPageNumbers": [2],
+      "classifications": ["TEXT_TRANSLATABLE"]
+    },
+    {
+      "pageNumber": 2,
+      "title": "Lecteur : examiner la pièce",
+      "body": "Premier paragraphe.\nDeuxième paragraphe avec [b]emphase[/b].",
+      "nextPageNumbers": [3],
+      "classifications": ["TEXT_TRANSLATABLE"]
+    },
+    {
+      "pageNumber": 3,
+      "title": "Ouvrir la conversation",
+      "body": "AA : Message artificiel.\nBB : Réponse artificielle.",
+      "logLabel": "PESTERLOG",
+      "nextPageNumbers": [4],
+      "classifications": ["LOG_TRANSLATABLE"]
+    },
+    {
+      "pageNumber": 4,
+      "title": "Écouter le dialogue",
+      "body": "PERSONNAGE : Ceci est une fixture.",
+      "logLabel": "DIALOGLOG",
+      "nextPageNumbers": [5],
+      "classifications": ["LOG_TRANSLATABLE"]
+    },
+    {
+      "pageNumber": 5,
+      "title": "Parler au sprite",
+      "body": "SPRITE : [color=#008800]Texte vert artificiel.[/color]",
+      "logLabel": "SPRITELOG",
+      "nextPageNumbers": [6],
+      "classifications": ["LOG_TRANSLATABLE"]
+    },
+    {
+      "pageNumber": 6,
+      "title": "Page sans corps",
+      "nextPageNumbers": [7],
+      "classifications": ["TEXT_TRANSLATABLE"]
+    },
+    {
+      "pageNumber": 7,
+      "title": "Tester le balisage",
+      "body": "[i]Italique[/i], [u]souligné[/u] et [spoiler]secret artificiel[/spoiler].",
+      "nextPageNumbers": [8],
+      "classifications": ["TEXT_TRANSLATABLE"]
+    },
+    {
+      "pageNumber": 8,
+      "title": "Observer l'image factice",
+      "body": "Le texte est disponible, mais l'image reste classée séparément.",
+      "nextPageNumbers": [9],
+      "classifications": ["TEXT_TRANSLATABLE", "IMAGE_TRANSLATION_REQUIRED"]
+    },
+    {
+      "pageNumber": 9,
+      "title": "Page interactive factice",
+      "body": "Seul le texte extérieur est traité.",
+      "nextPageNumbers": [10],
+      "classifications": ["TEXT_TRANSLATABLE", "INTERACTIVE_TRANSLATION_REQUIRED"]
+    },
+    {
+      "pageNumber": 10,
+      "title": "Préserver le quirk",
+      "body": "aLtErNaNcE volontaire !!! 3xactement conservée.",
+      "modifiedAt": "2026-08-20T00:00:00Z",
+      "nextPageNumbers": [],
+      "classifications": ["TEXT_TRANSLATABLE"]
+    }
+  ]
+}

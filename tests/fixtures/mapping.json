@@ -1,0 +1,83 @@
+[
+  {
+    "mspfaPageNumber": 1,
+    "homestuckOrdinal": 1,
+    "uhcMspaId": "001901",
+    "status": "verified",
+    "confidence": "exact",
+    "evidence": [{ "type": "fixture", "value": "cas artificiel 1" }],
+    "lastVerified": "2026-08-20"
+  },
+  {
+    "mspfaPageNumber": 2,
+    "homestuckOrdinal": 2,
+    "uhcMspaId": "001902",
+    "status": "verified",
+    "confidence": "exact",
+    "evidence": [{ "type": "fixture", "value": "cas artificiel 2" }]
+  },
+  {
+    "mspfaPageNumber": 3,
+    "homestuckOrdinal": 3,
+    "uhcMspaId": "001903",
+    "status": "verified",
+    "confidence": "exact",
+    "evidence": [{ "type": "fixture", "value": "log artificiel" }]
+  },
+  {
+    "mspfaPageNumber": 4,
+    "homestuckOrdinal": 500,
+    "uhcMspaId": "002400",
+    "status": "verified",
+    "confidence": "exact",
+    "evidence": [{ "type": "fixture", "value": "dialoglog artificiel" }]
+  },
+  {
+    "mspfaPageNumber": 5,
+    "homestuckOrdinal": 1000,
+    "uhcMspaId": "002900",
+    "status": "verified",
+    "confidence": "exact",
+    "evidence": [{ "type": "fixture", "value": "spritelog artificiel" }]
+  },
+  {
+    "mspfaPageNumber": 6,
+    "homestuckOrdinal": 2000,
+    "uhcMspaId": "003900",
+    "status": "verified",
+    "confidence": "exact",
+    "evidence": [{ "type": "fixture", "value": "page sans corps" }]
+  },
+  {
+    "mspfaPageNumber": 7,
+    "homestuckOrdinal": 3000,
+    "uhcMspaId": "004900",
+    "status": "verified",
+    "confidence": "exact",
+    "evidence": [{ "type": "fixture", "value": "balisage artificiel" }]
+  },
+  {
+    "mspfaPageNumber": 8,
+    "homestuckOrdinal": 4000,
+    "uhcMspaId": "005900",
+    "status": "verified",
+    "confidence": "exact",
+    "evidence": [{ "type": "fixture", "value": "image factice" }]
+  },
+  {
+    "mspfaPageNumber": 9,
+    "homestuckOrdinal": 5000,
+    "uhcMspaId": "006900",
+    "status": "verified",
+    "confidence": "exact",
+    "evidence": [{ "type": "fixture", "value": "interaction factice" }]
+  },
+  {
+    "mspfaPageNumber": 10,
+    "homestuckOrdinal": 5668,
+    "uhcMspaId": "007568",
+    "status": "verified",
+    "confidence": "exact",
+    "evidence": [{ "type": "fixture", "value": "quirk artificiel" }]
+  }
+]

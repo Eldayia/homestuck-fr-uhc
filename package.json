@@ -1,0 +1,26 @@
+{
+  "name": "homestuck-fr-uhc",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Outils de génération locale d'un mod français pour The Unofficial Homestuck Collection",
+  "license": "UNLICENSED",
+  "type": "module",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "bin": {
+    "hsfr": "./dist/src/cli/index.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "tsx --test tests/pipeline.test.ts tests/parser.test.ts",
+    "verify": "npm run typecheck && npm test && npm run build",
+    "hsfr": "tsx src/cli/index.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0"
+  }
+}
