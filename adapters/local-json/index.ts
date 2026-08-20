@@ -30,9 +30,20 @@ export class LocalJsonSource implements TranslationSource {
   async load(): Promise<TranslationSourceSnapshot> {
     const value = await readJsonFile(this.path)
     assertRecord(value, "source")
+    if (value.schemaVersion !== 1) {
+      throw new InputValidationError("source.schemaVersion doit valoir 1")
+    }
 
     const provider = requiredString(value, "provider", "source")
     const adventureId = requiredString(value, "adventureId", "source")
+    const metadata: TranslationSourceSnapshot["metadata"] = {}
+    if (value.metadata !== undefined) {
+      assertRecord(value.metadata, "source.metadata")
+      if (value.metadata.title !== undefined && typeof value.metadata.title !== "string") {
+        throw new InputValidationError("source.metadata.title doit être une chaîne")
+      }
+      if (typeof value.metadata.title === "string") metadata.title = value.metadata.title
+    }
     const rawPages = value.pages
     assertArray(rawPages, "source.pages")
 
@@ -45,7 +56,7 @@ export class LocalJsonSource implements TranslationSource {
       seen.add(page.pageNumber)
     }
 
-    const snapshot: TranslationSourceSnapshot = { provider, adventureId, pages }
+    const snapshot: TranslationSourceSnapshot = { schemaVersion: 1, provider, adventureId, metadata, pages }
     if (typeof value.sourceRevision === "string") {
       snapshot.sourceRevision = value.sourceRevision
     }

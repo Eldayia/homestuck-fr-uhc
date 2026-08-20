@@ -14,7 +14,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "tsx --test tests/pipeline.test.ts tests/parser.test.ts",
+    "test": "tsx --test tests/pipeline.test.ts tests/parser.test.ts tests/mspfa-source.test.ts",
     "verify": "npm run typecheck && npm test && npm run build",
     "hsfr": "tsx src/cli/index.ts"
   },

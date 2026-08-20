@@ -42,6 +42,17 @@ npm run hsfr -- build \
 
 Le résultat local est ignoré par Git.
 
+Importer un export MSPFA local sans accès réseau :
+
+```bash
+npm run hsfr -- import \
+  --source chemin/vers/export-mspfa.json \
+  --adventure 45546 \
+  --out .cache/imports/homestuck-fr.json
+```
+
+Un snapshot réel contient la traduction et doit rester hors Git. Voir [la documentation de la source](./docs/TRANSLATION_SOURCE.md).
+
 ## Licence
 
 Aucune licence de code n'a encore été choisie : `package.json` porte donc la valeur `UNLICENSED`. Aucun code provenant d'UHC ou d'un autre mod n'est copié dans ce dépôt. Les options sont présentées dans [la décision de licence](./docs/LICENSING_DECISION.md).

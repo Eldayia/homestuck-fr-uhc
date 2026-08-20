@@ -1,7 +1,11 @@
 {
+  "schemaVersion": 1,
   "provider": "local-json",
   "adventureId": "synthetic-fixture",
   "sourceRevision": "fixture-v1",
+  "metadata": {
+    "title": "Aventure entièrement artificielle"
+  },
   "pages": [
     {
       "pageNumber": 1,

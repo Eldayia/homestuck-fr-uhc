@@ -21,7 +21,7 @@ Cette feuille de route transforme le plan général en étapes vérifiables. Les
 | 0 | Investigation initiale | ✅ | M0 — recherche |
 | 1 | Socle et vertical slice artificiel | ✅ | M1 — preuve technique |
 | 2 | Cadre juridique et gouvernance | 🟡 | M2 — MVP juridiquement sûr |
-| 3 | Adaptateur MSPFA et import local | ⬜ | M2 — MVP juridiquement sûr |
+| 3 | Adaptateur MSPFA et import local | 🟡 | M2 — MVP juridiquement sûr |
 | 4 | Snapshots et mises à jour incrémentales | ⬜ | M2 — MVP juridiquement sûr |
 | 5 | Mapping MSPFA ↔ Homestuck ↔ UHC | ⬜ | M3 — alpha locale |
 | 6 | Parser et normalisation du contenu réel | ⬜ | M3 — alpha locale |
@@ -138,23 +138,23 @@ Un mod prêt à installer contenant la traduction ne pourra être publié qu'apr
 
 **Critère de sortie :** le dépôt peut évoluer et publier ses outils sans ambiguïté juridique. L'absence d'autorisation ne bloque pas le MODE B, mais bloque toujours le MODE A.
 
-## Phase 3 — Adaptateur MSPFA et import local ⬜
+## Phase 3 — Adaptateur MSPFA et import local 🟡
 
 ### 3.1 Contrat de source
 
-- [ ] Stabiliser `TranslationSource` et le schéma du snapshot brut.
-- [ ] Distinguer métadonnées d'aventure et tableau de pages.
-- [ ] Conserver les champs source nécessaires à la provenance.
-- [ ] Refuser explicitement le JavaScript et le CSS personnalisés.
-- [ ] Versionner le format de snapshot local.
+- [x] Stabiliser `TranslationSource` et le schéma du snapshot brut.
+- [x] Distinguer métadonnées d'aventure et tableau de pages.
+- [x] Conserver les champs source nécessaires à la provenance.
+- [x] Écarter explicitement le JavaScript et le CSS personnalisés.
+- [x] Versionner le format de snapshot local.
 
 ### 3.2 Import local
 
-- [ ] Accepter un export JSON MSPFA local.
-- [ ] Ajouter `hsfr import <fichier>`.
-- [ ] Valider le schéma avant toute transformation.
-- [ ] Produire des erreurs mentionnant précisément la page et le champ.
-- [ ] Tester un snapshot synthétique reproduisant les clés compactes MSPFA.
+- [x] Accepter un export JSON MSPFA local.
+- [x] Ajouter `hsfr import <fichier>`.
+- [x] Valider le schéma avant toute transformation.
+- [x] Produire des erreurs mentionnant précisément la page et le champ.
+- [x] Tester un snapshot synthétique reproduisant les clés compactes MSPFA.
 
 ### 3.3 Accès réseau facultatif
 
@@ -320,7 +320,7 @@ Un mod prêt à installer contenant la traduction ne pourra être publié qu'apr
 ## Phase 12 — Documentation et contributions ⬜
 
 - [ ] Compléter le README avec installation et limitations.
-- [ ] Créer `docs/TRANSLATION_SOURCE.md`.
+- [x] Créer `docs/TRANSLATION_SOURCE.md`.
 - [ ] Créer `docs/UPDATE_WORKFLOW.md`.
 - [ ] Créer `CONTRIBUTING.md`.
 - [ ] Créer la checklist de release.

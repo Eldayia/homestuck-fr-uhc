@@ -1,0 +1,27 @@
+{
+  "i": 99999,
+  "n": "Aventure MSPFA synthétique",
+  "y": "body { background: url(https://invalid.example/never-imported); }",
+  "v": "throw new Error('NEVER_EXECUTE_THIS_FIXTURE')",
+  "p": [
+    {
+      "d": 1787184000000,
+      "c": "==> Première commande artificielle",
+      "b": "Corps artificiel [b]simple[/b].",
+      "n": [2]
+    },
+    {
+      "d": 1787184060000,
+      "c": "Ouvrir le log artificiel",
+      "b": "[spoiler=PESTERLOG]AA : Message factice.[/spoiler]",
+      "n": [3],
+      "k": true
+    },
+    {
+      "d": 1787184120000,
+      "c": "Examiner le média factice",
+      "b": "[flash=https://invalid.example/fake.swf]",
+      "n": []
+    }
+  ]
+}

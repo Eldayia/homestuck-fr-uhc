@@ -17,9 +17,13 @@ export interface SourcePage {
 }
 
 export interface TranslationSourceSnapshot {
+  schemaVersion: 1
   provider: string
   adventureId: string
   sourceRevision?: string
+  metadata: {
+    title?: string
+  }
   pages: SourcePage[]
 }
 

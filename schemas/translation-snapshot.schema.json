@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Eldayia/homestuck-fr-uhc/schemas/translation-snapshot.schema.json",
+  "title": "Homestuck FR UHC local translation snapshot",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "provider", "adventureId", "metadata", "pages"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "provider": { "type": "string", "minLength": 1 },
+    "adventureId": { "type": "string", "minLength": 1 },
+    "sourceRevision": {
+      "type": "string",
+      "pattern": "^(?:sha256:[0-9a-f]{64}|[^:]+)$"
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "title": { "type": "string" }
+      }
+    },
+    "pages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["pageNumber", "nextPageNumbers", "classifications"],
+        "properties": {
+          "pageNumber": { "type": "integer", "minimum": 1 },
+          "title": { "type": "string" },
+          "body": { "type": "string" },
+          "modifiedAt": { "type": "string", "format": "date-time" },
+          "nextPageNumbers": {
+            "type": "array",
+            "items": { "type": "integer", "minimum": 1 }
+          },
+          "classifications": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "TEXT_TRANSLATABLE",
+                "LOG_TRANSLATABLE",
+                "IMAGE_TRANSLATION_REQUIRED",
+                "FLASH_TRANSLATION_REQUIRED",
+                "INTERACTIVE_TRANSLATION_REQUIRED",
+                "UNSUPPORTED"
+              ]
+            }
+          },
+          "logLabel": {
+            "enum": ["PESTERLOG", "DIALOGLOG", "SPRITELOG"]
+          }
+        }
+      }
+    }
+  }
+}

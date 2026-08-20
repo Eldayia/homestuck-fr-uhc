@@ -15,9 +15,9 @@ Ce document décrit le vertical slice initial. Il ne remplace pas les décisions
 ## Dépendances entre couches
 
 ```text
-adapters/local-json
-        │
-        ▼
+adapters/mspfa ──► snapshot v1 ──► adapters/local-json
+                                      │
+                                      ▼
 domain → parser → normalizer → mapper → overrides → validator → generator
                                                            ▲
                                                            │
@@ -42,4 +42,6 @@ generated/<nom>/
 
 Le parser accepte un sous-ensemble volontairement restreint du BBCode : emphase, soulignement, barré, couleur hexadécimale, spoiler, saut de ligne et URL HTTP(S). Le HTML source est échappé. Les balises actives, protocoles de script et BBCode inconnu sont bloqués.
 
-Les fixtures couvrent dix formes artificielles, mais ne valident pas encore la syntaxe réelle de MSPFA. Le prochain adaptateur devra convertir les clés compactes MSPFA vers le modèle source sans étendre les droits de redistribution.
+Les fixtures du pipeline couvrent dix formes artificielles. Une fixture supplémentaire reproduit la structure compacte MSPFA sans reprendre de contenu réel. L'adaptateur MSPFA local convertit cette structure vers un snapshot versionné, élimine le JavaScript et le CSS personnalisés, puis écrit uniquement dans un emplacement choisi par l'utilisateur — `.cache/` par défaut.
+
+L'accès réseau, la normalisation exhaustive du BBCode réel et les mises à jour différentielles restent hors de la portée actuelle.

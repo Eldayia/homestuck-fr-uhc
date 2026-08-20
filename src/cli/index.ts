@@ -3,9 +3,11 @@
 import { resolve } from "node:path"
 
 import { LocalJsonSource } from "../../adapters/local-json/index.js"
+import { MspfaSnapshotSource } from "../../adapters/mspfa/snapshot-source.js"
 import { HsfrError, InputValidationError } from "../domain/errors.js"
 import { writeUhcMod } from "../generator/uhc-mod.js"
 import { readDistributionPolicy, readMappings, readOverrides } from "../io/config.js"
+import { writeStableJsonFile } from "../io/write-json.js"
 import { runPipeline } from "../pipeline/build-pipeline.js"
 import { assertContentDistributionAllowed } from "../policy/distribution.js"
 
@@ -15,6 +17,7 @@ interface CliOptions {
   overrides: string
   out: string
   policy: string
+  adventure?: string
 }
 
 async function main(argv: string[]): Promise<void> {
@@ -24,7 +27,14 @@ async function main(argv: string[]): Promise<void> {
     return
   }
 
-  const options = parseOptions(optionArguments)
+  const options = parseOptions(command, optionArguments)
+
+  if (command === "import") {
+    const snapshot = await new MspfaSnapshotSource(options.source, options.adventure).load()
+    await writeStableJsonFile(options.out, snapshot)
+    console.log(`[OK] Snapshot MSPFA ${snapshot.adventureId}: ${snapshot.pages.length} pages importées dans ${options.out}`)
+    return
+  }
 
   if (command === "package") {
     const policy = await readDistributionPolicy(options.policy)
@@ -54,28 +64,41 @@ async function main(argv: string[]): Promise<void> {
   }
 }
 
-function parseOptions(arguments_: string[]): CliOptions {
+function parseOptions(command: string, arguments_: string[]): CliOptions {
   const values = new Map<string, string>()
+  const allowed = new Set(["source", "mapping", "overrides", "out", "policy", "adventure"])
   for (let index = 0; index < arguments_.length; index += 2) {
     const key = arguments_[index]
     const value = arguments_[index + 1]
     if (key === undefined || !key.startsWith("--") || value === undefined) {
       throw new InputValidationError(`Option invalide près de ${key ?? "la fin de commande"}`)
     }
-    values.set(key.slice(2), value)
+    const name = key.slice(2)
+    if (!allowed.has(name)) {
+      throw new InputValidationError(`Option inconnue: --${name}`)
+    }
+    values.set(name, value)
   }
 
-  return {
+  if (command === "import" && !values.has("source")) {
+    throw new InputValidationError("La commande import exige --source <export-mspfa.json>")
+  }
+
+  const options: CliOptions = {
     source: resolve(values.get("source") ?? "tests/fixtures/source.json"),
     mapping: resolve(values.get("mapping") ?? "tests/fixtures/mapping.json"),
     overrides: resolve(values.get("overrides") ?? "tests/fixtures/overrides.json"),
-    out: resolve(values.get("out") ?? "generated/homestuck-fr"),
+    out: resolve(values.get("out") ?? (command === "import" ? ".cache/imports/mspfa-snapshot.json" : "generated/homestuck-fr")),
     policy: resolve(values.get("policy") ?? "data/metadata/distribution-policy.json"),
   }
+  const adventure = values.get("adventure")
+  if (adventure !== undefined) options.adventure = adventure
+  return options
 }
 
 function printHelp(): void {
   console.log(`Usage:
+  hsfr import   --source export-mspfa.json [--adventure id] [--out snapshot.json]
   hsfr validate [--source fichier] [--mapping fichier] [--overrides fichier]
   hsfr build    [--source fichier] [--mapping fichier] [--overrides fichier] [--out dossier]
   hsfr package  [--policy fichier]
