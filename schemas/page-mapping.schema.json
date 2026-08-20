@@ -29,7 +29,7 @@
               "additionalProperties": false,
               "required": ["type", "value"],
               "properties": {
-                "type": { "enum": ["asset-id", "manual", "navigation", "sequence", "title", "fixture"] },
+                "type": { "enum": ["asset-id", "manual", "navigation", "sequence", "structure", "title", "uhc-reference", "fixture"] },
                 "value": { "type": "string", "minLength": 1 }
               }
             }

@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Eldayia/homestuck-fr-uhc/schemas/uhc-reference.schema.json",
+  "title": "Homestuck FR local UHC reference index",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "sourceHash", "pages"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "sourceHash": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "pages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["homestuckOrdinal", "uhcMspaId", "mediaAssetOrdinals", "mediaCount", "hasContent", "isLog"],
+        "properties": {
+          "homestuckOrdinal": { "type": "integer", "minimum": 1, "maximum": 8130 },
+          "uhcMspaId": { "type": "string", "pattern": "^\\d{6}$" },
+          "titleHash": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+          "mediaAssetOrdinals": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": { "type": "integer", "minimum": 1, "maximum": 8130 }
+          },
+          "mediaCount": { "type": "integer", "minimum": 0 },
+          "hasContent": { "type": "boolean" },
+          "isLog": { "type": "boolean" }
+        }
+      }
+    }
+  }
+}

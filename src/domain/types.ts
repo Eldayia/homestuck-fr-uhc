@@ -32,7 +32,7 @@ export interface TranslationSource {
 }
 
 export interface MappingEvidence {
-  type: "asset-id" | "manual" | "navigation" | "sequence" | "title" | "fixture"
+  type: "asset-id" | "manual" | "navigation" | "sequence" | "structure" | "title" | "uhc-reference" | "fixture"
   value: string
 }
 
@@ -61,9 +61,25 @@ export interface MappingCandidate {
 
 export interface MappingProposal {
   mspfaPageNumber: number
-  status: "mapped" | "candidate" | "conflict" | "unresolved"
+  status: "mapped" | "candidate" | "conflict" | "stale" | "unresolved"
   existing?: PageMapping
   candidates: MappingCandidate[]
+}
+
+export interface UhcReferencePage {
+  homestuckOrdinal: number
+  uhcMspaId: string
+  titleHash?: string
+  mediaAssetOrdinals: number[]
+  mediaCount: number
+  hasContent: boolean
+  isLog: boolean
+}
+
+export interface UhcReferenceDocument {
+  schemaVersion: 1
+  sourceHash: string
+  pages: UhcReferencePage[]
 }
 
 export interface MappingProposalDocument {

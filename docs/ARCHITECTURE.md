@@ -20,6 +20,9 @@ MSPFA réseau ──► cache brut privé ──┐
 export MSPFA local ─────────────────┘                         │
                                                             ▼
 domain → parser → normalizer → mapper → overrides → validator → generator
+                                  ▲
+                                  │
+          mspa.json UHC local ──► index structurel sans texte
                                                            ▲
                                                            │
                                                           CLI
@@ -50,3 +53,5 @@ L'accès réseau est isolé dans `adapters/mspfa/network-source.ts` et ne consti
 Le module `src/update/` compare deux états par hash. Il ne dépend pas du mapping UHC et ne stocke aucun texte dans `source-state.json`. Les changements de position sont seulement proposés comme déplacements possibles et restent soumis à une revue humaine.
 
 Le module `src/mapper/propose-mappings.ts` combine des preuves indépendantes sans modifier le mapping persistant. Il peut signaler un candidat ou un conflit, mais seule une entrée explicitement `verified` est acceptée par le générateur.
+
+Le module `src/mapper/uhc-reference.ts` réduit le `mspa.json` UHC possédé localement par l'utilisateur à un index sans texte : identifiants, hashes, compteurs et indicateurs structurels. Cet index renforce les candidats et permet de détecter un mapping vérifié devenu obsolète lorsque son `sourceHash` ne correspond plus.

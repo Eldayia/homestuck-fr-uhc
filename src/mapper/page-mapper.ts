@@ -1,5 +1,20 @@
 import { MappingError } from "../domain/errors.js"
-import type { CanonicalTranslationPage, PageMapping } from "../domain/types.js"
+import { sha256, stableStringify } from "../domain/hash.js"
+import type { CanonicalTranslationPage, PageMapping, SourcePage } from "../domain/types.js"
+
+export function sourcePageHash(page: SourcePage): string {
+  return sha256(stableStringify(page))
+}
+
+export function assertMappingSourceHashes(pages: SourcePage[], mappings: PageMapping[]): void {
+  const pageByNumber = new Map(pages.map((page) => [page.pageNumber, page]))
+  for (const mapping of mappings) {
+    const page = pageByNumber.get(mapping.mspfaPageNumber)
+    if (page !== undefined && mapping.sourceHash !== undefined && mapping.sourceHash !== sourcePageHash(page)) {
+      throw new MappingError(`Mapping obsolète pour la page source ${mapping.mspfaPageNumber}: nouvelle revue requise`)
+    }
+  }
+}
 
 export function expectedUhcMspaId(homestuckOrdinal: number): string {
   if (!Number.isInteger(homestuckOrdinal) || homestuckOrdinal < 1 || homestuckOrdinal > 8130) {

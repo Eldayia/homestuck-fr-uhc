@@ -13,6 +13,7 @@ import { runPipeline } from "../pipeline/build-pipeline.js"
 import { assertContentDistributionAllowed } from "../policy/distribution.js"
 import { runUpdate } from "../update/update-workflow.js"
 import { proposeMappings, validateMappingSet } from "../mapper/propose-mappings.js"
+import { buildUhcReference, readUhcReference } from "../mapper/uhc-reference.js"
 
 interface CliOptions {
   source: string
@@ -27,6 +28,7 @@ interface CliOptions {
   minimumIntervalMs: number
   state: string
   report: string
+  reference?: string
   dryRun: boolean
   adventure?: string
 }
@@ -80,19 +82,31 @@ async function main(argv: string[]): Promise<void> {
     return
   }
 
+  if (command === "uhc-index") {
+    if (!optionArguments.includes("--source")) {
+      throw new InputValidationError("La commande uhc-index exige --source <mspa.json>")
+    }
+    const reference = await buildUhcReference(options.source)
+    await writeStableJsonFile(options.out, reference)
+    console.log(`[OK] Index UHC sans texte: ${reference.pages.length} pages écrites dans ${options.out}`)
+    return
+  }
+
   if (command === "mapping-propose") {
     if (!optionArguments.includes("--source")) {
       throw new InputValidationError("La commande mapping-propose exige --source <snapshot.json>")
     }
-    const [snapshot, mappings] = await Promise.all([
+    const [snapshot, mappings, reference] = await Promise.all([
       new LocalJsonSource(options.source).load(),
       readMappings(options.mapping),
+      options.reference === undefined ? Promise.resolve(undefined) : readUhcReference(options.reference),
     ])
-    const proposals = proposeMappings(snapshot, mappings)
+    const proposals = proposeMappings(snapshot, mappings, reference)
     await writeStableJsonFile(options.out, proposals)
     const conflicts = proposals.proposals.filter((proposal) => proposal.status === "conflict").length
     const unresolved = proposals.proposals.filter((proposal) => proposal.status === "unresolved").length
-    console.log(`[OK] ${proposals.proposals.length} pages analysées: ${conflicts} conflits, ${unresolved} sans candidat`)
+    const stale = proposals.proposals.filter((proposal) => proposal.status === "stale").length
+    console.log(`[OK] ${proposals.proposals.length} pages analysées: ${conflicts} conflits, ${stale} obsolètes, ${unresolved} sans candidat`)
     return
   }
 
@@ -148,6 +162,7 @@ function parseOptions(command: string, arguments_: string[]): CliOptions {
     "minimum-interval-ms",
     "state",
     "report",
+    "reference",
     "dry-run",
   ])
   for (let index = 0; index < arguments_.length; index += 2) {
@@ -171,7 +186,13 @@ function parseOptions(command: string, arguments_: string[]): CliOptions {
     source: resolve(values.get("source") ?? "tests/fixtures/source.json"),
     mapping: resolve(values.get("mapping") ?? "tests/fixtures/mapping.json"),
     overrides: resolve(values.get("overrides") ?? "tests/fixtures/overrides.json"),
-    out: resolve(values.get("out") ?? ((command === "import" || command === "fetch") ? ".cache/imports/mspfa-snapshot.json" : "generated/homestuck-fr")),
+    out: resolve(values.get("out") ?? (
+      command === "import" || command === "fetch"
+        ? ".cache/imports/mspfa-snapshot.json"
+        : command === "uhc-index"
+          ? ".cache/uhc/reference.json"
+          : "generated/homestuck-fr"
+    )),
     policy: resolve(values.get("policy") ?? "data/metadata/distribution-policy.json"),
     cache: resolve(values.get("cache") ?? ".cache/mspfa"),
     offline: parseBooleanOption(values.get("offline") ?? "false", "offline"),
@@ -184,6 +205,8 @@ function parseOptions(command: string, arguments_: string[]): CliOptions {
   }
   const adventure = values.get("adventure")
   if (adventure !== undefined) options.adventure = adventure
+  const reference = values.get("reference")
+  if (reference !== undefined) options.reference = resolve(reference)
   return options
 }
 
@@ -192,7 +215,8 @@ function printHelp(): void {
   hsfr import   --source export-mspfa.json [--adventure id] [--out snapshot.json]
   hsfr fetch    --adventure id [--cache dossier] [--offline true|false] [--out snapshot.json]
   hsfr update   --source snapshot.json [--state fichier] [--report fichier] [--dry-run true|false]
-  hsfr mapping-propose --source snapshot.json [--mapping pages.json] [--out propositions.json]
+  hsfr uhc-index --source mspa.json [--out reference.json]
+  hsfr mapping-propose --source snapshot.json [--mapping pages.json] [--reference reference.json] [--out propositions.json]
   hsfr mapping-status  [--mapping pages.json]
   hsfr validate [--source fichier] [--mapping fichier] [--overrides fichier]
   hsfr build    [--source fichier] [--mapping fichier] [--overrides fichier] [--out dossier]

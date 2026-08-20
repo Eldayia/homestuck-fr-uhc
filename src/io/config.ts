@@ -136,7 +136,7 @@ function parseMapping(value: unknown, index: number): PageMapping {
 function parseEvidence(value: unknown, label: string): MappingEvidence {
   assertRecord(value, label)
   const type = requiredString(value, "type", label)
-  if (type !== "asset-id" && type !== "manual" && type !== "navigation" && type !== "sequence" && type !== "title" && type !== "fixture") {
+  if (type !== "asset-id" && type !== "manual" && type !== "navigation" && type !== "sequence" && type !== "structure" && type !== "title" && type !== "uhc-reference" && type !== "fixture") {
     throw new InputValidationError(`${label}.type est invalide`)
   }
   return { type, value: requiredString(value, "value", label) }

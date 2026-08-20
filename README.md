@@ -81,11 +81,18 @@ Voir [le workflow de mise à jour](./docs/UPDATE_WORKFLOW.md) pour l'état persi
 Générer des candidats de mapping sans les valider automatiquement :
 
 ```bash
+npm run hsfr -- uhc-index \
+  --source chemin/vers/UHC/asset-pack/archive/data/mspa.json \
+  --out .cache/uhc/reference.json
+
 npm run hsfr -- mapping-propose \
   --source .cache/imports/homestuck-fr.json \
   --mapping data/mapping/pages.json \
+  --reference .cache/uhc/reference.json \
   --out .cache/mapping/proposals.json
 ```
+
+L'index UHC ne conserve aucun titre ni contenu en clair et reste hors Git.
 
 Voir [la documentation du mapping](./docs/MAPPING.md).
 

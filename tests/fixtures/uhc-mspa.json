@@ -1,0 +1,20 @@
+{
+  "story": {
+    "001901": {
+      "title": "Commande artificielle identique",
+      "content": "Narration anglaise entièrement artificielle.",
+      "media": ["/storyfiles/hs2/00001.gif"]
+    },
+    "001902": {
+      "title": "Conversation artificielle",
+      "content": "|PESTERLOG|Dialogue synthétique confidentiel.",
+      "media": ["/storyfiles/hs2/00002.gif", "/assets/decoration.png"]
+    },
+    "000001": {
+      "title": "Page hors Homestuck",
+      "content": "Cette entrée doit être ignorée.",
+      "media": []
+    }
+  },
+  "version": "fixture-only"
+}

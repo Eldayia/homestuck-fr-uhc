@@ -72,6 +72,15 @@ test("bloque les mappings ambigus", async () => {
   await assert.rejects(() => runPipeline(input), MappingError)
 })
 
+test("bloque un mapping vérifié devenu obsolète", async () => {
+  const input = await fixtureInput()
+  const first = input.mappings[0]
+  assert.ok(first)
+  input.mappings[0] = { ...first, sourceHash: `sha256:${"0".repeat(64)}` }
+
+  await assert.rejects(() => runPipeline(input), MappingError)
+})
+
 test("applique un override lié au hash et bloque un changement amont", async () => {
   const result = await runPipeline(await fixtureInput())
   const first = result.pages[0]

@@ -201,7 +201,7 @@ Un mod prêt à installer contenant la traduction ne pourra être publié qu'apr
 - [x] Utiliser les ancres déjà vérifiées.
 - [x] Analyser le graphe précédent/suivant.
 - [x] Mesurer la monotonie locale sans l'imposer aveuglément.
-- [ ] Comparer titre, structure et métadonnées disponibles localement.
+- [x] Comparer titre, structure et métadonnées disponibles localement sans conserver le texte UHC.
 - [x] Signaler les incohérences pouvant correspondre à des pages ajoutées, bonus, retours ou sauts.
 - [x] Conserver toutes les preuves ayant conduit à un candidat.
 
@@ -406,13 +406,12 @@ Cette phase n'est pas nécessaire à la réussite du MODE B.
 
 Ordre proposé pour les prochains changements :
 
-1. créer les documents juridiques de la phase 2 et choisir la licence du code ;
-2. définir le format de snapshot MSPFA local, avec fixtures synthétiques ;
-3. implémenter `hsfr import` sans réseau ;
-4. implémenter l'adaptateur réseau MSPFA avec cache hors Git ;
-5. comparer deux snapshots et produire le premier rapport `dry-run` ;
-6. commencer le moteur de candidats de mapping avec les identifiants d'assets ;
-7. tester localement un petit échantillon réel sans le committer.
+1. vérifier localement un échantillon réel d'environ vingt pages sans le committer ;
+2. étendre le parser aux structures BBCode réellement observées avec des fixtures minimales artificielles ;
+3. produire un rapport des pages spéciales et non supportées sans contenu traduit ;
+4. compléter `hsfr status`, `diff` et les codes de sortie du workflow ;
+5. ajouter la CI des outils et le contrôle automatique d'absence de corpus ;
+6. choisir avec le propriétaire du dépôt la licence du code original.
 
 ## Règle de mise à jour de cette feuille de route
 
