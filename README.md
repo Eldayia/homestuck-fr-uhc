@@ -1,51 +1,141 @@
-# Homestuck FR for The Unofficial Homestuck Collection
+# Homestuck FR pour The Unofficial Homestuck Collection
 
-Projet communautaire non officiel destiné à produire localement un mod français pour The Unofficial Homestuck Collection (UHC).
+> Générer **localement** un mod français pour The Unofficial Homestuck Collection (UHC), sans redistribuer la traduction ni les assets protégés.
 
-Ce projet n'est affilié ni à Homestuck, ni à MSPFA, ni à The Unofficial Homestuck Collection.
+Ce projet communautaire non officiel n'est affilié ni à Homestuck, ni à MSPFA, ni à The Unofficial Homestuck Collection.
 
-## État
+## État du projet
 
-Le dépôt est au stade du premier vertical slice. Il contient uniquement des outils et des fixtures artificielles. Il ne contient aucune traduction française ni aucun asset Homestuck.
+| Élément | État |
+|---|---|
+| Outils MODE B | Bêta technique `0.1.0` |
+| UHC ciblé | `2.8.1`, validation réelle en cours |
+| Traduction incluse | Non |
+| Assets Homestuck/UHC inclus | Non |
+| Mapping réel publié | Aucun pour le moment |
+| Pages sans traduction | Conservées en anglais |
 
-La redistribution du contenu traduit n'étant pas autorisée à ce jour, la politique par défaut est :
+Le dépôt contient uniquement du code, de la documentation, des configurations vides et des fixtures manifestement artificielles. La politique reste :
 
 ```text
 CONTENT_DISTRIBUTION_ALLOWED=false
 ```
 
-Consulter :
+## Sommaire
 
-- [la feuille de route](./docs/ROADMAP.md) pour l'avancement étape par étape ;
-- [la recherche initiale](./docs/RESEARCH.md) pour les décisions techniques et juridiques ;
-- [l'architecture](./docs/ARCHITECTURE.md) pour les invariants du pipeline actuel ;
-- [la normalisation du contenu](./docs/CONTENT_NORMALIZATION.md) pour la liste blanche, les logs et les règles de sécurité ;
-- [le workflow CLI](./docs/CLI.md) et [la compatibilité UHC](./docs/UHC_COMPATIBILITY.md) pour la génération locale ;
-- [la reproductibilité](./docs/REPRODUCIBILITY.md), [les assets](./docs/ASSETS.md) et [la qualité](./docs/QUALITY.md) pour les garde-fous ;
-- [la recherche juridique](./docs/LEGAL_RESEARCH.md) et [la checklist de release](./docs/RELEASE_CHECKLIST.md) pour les règles de distribution.
+1. [Comprendre le fonctionnement](#1-comprendre-le-fonctionnement)
+2. [Installer UHC et son Asset Pack](#2-installer-uhc-et-son-asset-pack)
+3. [Installer les outils Homestuck FR](#3-installer-les-outils-homestuck-fr)
+4. [Obtenir la traduction localement](#4-obtenir-la-traduction-localement)
+5. [Indexer les pages UHC](#5-indexer-les-pages-uhc)
+6. [Préparer et vérifier les mappings](#6-préparer-et-vérifier-les-mappings)
+7. [Contrôler l'état du projet](#7-contrôler-létat-du-projet)
+8. [Verrouiller et générer le mod](#8-verrouiller-et-générer-le-mod)
+9. [Installer le mod dans UHC](#9-installer-le-mod-dans-uhc)
+10. [Mettre la traduction à jour](#10-mettre-la-traduction-à-jour)
+11. [Résoudre les problèmes courants](#11-résoudre-les-problèmes-courants)
 
-## Développement
+---
 
-Prérequis : Node.js 22 ou plus récent.
+## 1. Comprendre le fonctionnement
+
+Le projet suit ce parcours :
+
+```text
+Source française locale
+        ↓
+Snapshot privé dans .cache/
+        ↓
+Index structurel de l'UHC local
+        ↓
+Mappings revus humainement
+        ↓
+Validation + verrou reproductible
+        ↓
+Mod généré dans generated/
+        ↓
+Installation manuelle dans UHC
+```
+
+Le dépôt fournit la machine, pas le carburant : chaque utilisateur obtient localement la traduction et utilise son propre Asset Pack UHC. Aucun snapshot réel, `translation.json`, image, Flash ou archive de contenu ne doit être committé ou partagé.
+
+### Dossiers importants
+
+| Dossier | Usage | Peut être publié ? |
+|---|---|---|
+| `src/`, `adapters/` | code des outils | oui |
+| `data/mapping/` | mappings techniques sans texte | après revue |
+| `.cache/` | sources, index et rapports locaux | non |
+| `generated/` | mod français généré | non sans autorisation |
+| `.release/` | archive MODE B des outils | oui après validation |
+
+---
+
+## 2. Installer UHC et son Asset Pack
+
+1. Installer une version officielle de **The Unofficial Homestuck Collection**. Le projet cible actuellement UHC `2.8.1`.
+2. Obtenir séparément l'Asset Pack compatible. Il n'est pas fourni ici.
+3. Décompresser l'Asset Pack dans un dossier stable.
+4. Au premier démarrage d'UHC, cliquer sur **Locate Assets**.
+5. Sélectionner le dossier racine de l'Asset Pack, celui qui contient tous ses sous-dossiers.
+6. Lancer **Validate asset pack** et attendre la fin du contrôle.
+7. Terminer l'assistant de démarrage.
+
+UHC et ses releases sont disponibles sur le [dépôt officiel](https://github.com/GiovanH/unofficial-homestuck-collection). L'Asset Pack reste séparé du code UHC et de ce projet.
+
+---
+
+## 3. Installer les outils Homestuck FR
+
+### Prérequis
+
+- Node.js 22 ou plus récent ;
+- npm, fourni avec Node.js ;
+- Git uniquement pour l'installation depuis le dépôt ;
+- assez d'espace pour les données locales et le mod généré.
+
+Vérifier Node.js :
 
 ```bash
-npm install
+node --version
+npm --version
+```
+
+### Option A — depuis le dépôt
+
+```bash
+git clone https://github.com/Eldayia/homestuck-fr-uhc.git
+cd homestuck-fr-uhc
+npm ci
 npm run verify
 ```
 
-Exécuter le vertical slice sur les fixtures artificielles :
+Afficher l'aide :
 
 ```bash
-npm run hsfr -- build \
-  --source tests/fixtures/source.json \
-  --mapping tests/fixtures/mapping.json \
-  --overrides tests/fixtures/overrides.json \
-  --out generated/demo
+npm run hsfr -- --help
 ```
 
-Le résultat local est ignoré par Git.
+### Option B — depuis une archive MODE B
 
-Importer un export MSPFA local sans accès réseau :
+Après publication d'une release autorisée :
+
+```bash
+npm install ./homestuck-fr-uhc-0.1.0.tgz
+npx hsfr --help
+```
+
+Comparer auparavant le SHA-256 de l'archive avec `SHA256SUMS` fourni dans la release.
+
+> Dans les exemples suivants, remplacer `npm run hsfr --` par `npx hsfr` si l'archive a été installée comme paquet.
+
+---
+
+## 4. Obtenir la traduction localement
+
+Le snapshot contient le texte français : il doit rester sous `.cache/`, hors Git et hors des pièces jointes GitHub.
+
+### Méthode recommandée — importer un export local
 
 ```bash
 npm run hsfr -- import \
@@ -54,9 +144,7 @@ npm run hsfr -- import \
   --out .cache/imports/homestuck-fr.json
 ```
 
-Un snapshot réel contient la traduction et doit rester hors Git. Voir [la documentation de la source](./docs/TRANSLATION_SOURCE.md).
-
-Récupérer prudemment un snapshot depuis MSPFA :
+### Méthode facultative — récupération directe
 
 ```bash
 npm run hsfr -- fetch \
@@ -65,29 +153,45 @@ npm run hsfr -- fetch \
   --out .cache/imports/homestuck-fr.json
 ```
 
-Relire le dernier cache sans aucun accès réseau :
+Cette commande contacte MSPFA uniquement à la demande, limite la fréquence des requêtes et valide la réponse avant de remplacer le cache.
+
+Pour relire le cache sans réseau :
 
 ```bash
-npm run hsfr -- fetch --adventure 45546 --offline true
+npm run hsfr -- fetch \
+  --adventure 45546 \
+  --cache .cache/mspfa \
+  --offline true \
+  --out .cache/imports/homestuck-fr.json
 ```
 
-Prévisualiser une mise à jour sans écrire :
+---
 
-```bash
-npm run hsfr -- update \
-  --source .cache/imports/homestuck-fr.json \
-  --dry-run true
-```
+## 5. Indexer les pages UHC
 
-Voir [le workflow de mise à jour](./docs/UPDATE_WORKFLOW.md) pour l'état persistant et les rapports.
-
-Générer des candidats de mapping sans les valider automatiquement :
+Repérer dans l'Asset Pack local le fichier `archive/data/mspa.json`, puis créer un index sans texte en clair :
 
 ```bash
 npm run hsfr -- uhc-index \
-  --source chemin/vers/UHC/asset-pack/archive/data/mspa.json \
+  --source chemin/vers/Asset_Pack/archive/data/mspa.json \
   --out .cache/uhc/reference.json
+```
 
+L'index conserve seulement des identifiants, hashes et informations structurelles. Il ne copie ni titre, ni corps de page, ni média.
+
+---
+
+## 6. Préparer et vérifier les mappings
+
+Un mapping relie trois identifiants différents :
+
+- le numéro de page dans l'aventure MSPFA ;
+- l'ordinal Homestuck ;
+- l'identifiant interne UHC à six chiffres.
+
+### Générer les propositions
+
+```bash
 npm run hsfr -- mapping-propose \
   --source .cache/imports/homestuck-fr.json \
   --mapping data/mapping/pages.json \
@@ -95,20 +199,206 @@ npm run hsfr -- mapping-propose \
   --out .cache/mapping/proposals.json
 ```
 
-L'index UHC ne conserve aucun titre ni contenu en clair et reste hors Git.
-
-Préparer un rapport local de vingt pages représentatives à vérifier humainement :
+### Préparer un échantillon de 20 pages
 
 ```bash
 npm run hsfr -- mapping-review \
   --source .cache/imports/homestuck-fr.json \
   --mapping data/mapping/pages.json \
   --reference .cache/uhc/reference.json \
-  --sample-size 20
+  --sample-size 20 \
+  --out .cache/mapping/review.md
 ```
 
-Voir [la documentation du mapping](./docs/MAPPING.md).
+### Valider humainement
+
+Chaque proposition doit être comparée dans UHC avant de passer à `verified`. Ajouter ensuite dans `data/mapping/pages.json` l'ordinal, l'ID UHC, le hash source, la date et une preuve `manual` sans recopier le texte.
+
+```bash
+npm run hsfr -- mapping-status --mapping data/mapping/pages.json
+```
+
+Ne jamais accepter automatiquement le candidat « le plus proche ». Une insertion ou une page bonus peut décaler toute une séquence. Le guide complet se trouve dans [`docs/MAPPING.md`](./docs/MAPPING.md).
+
+---
+
+## 7. Contrôler l'état du projet
+
+### Couverture et conflits
+
+```bash
+npm run hsfr -- status \
+  --source .cache/imports/homestuck-fr.json \
+  --mapping data/mapping/pages.json \
+  --overrides data/overrides/pages.json \
+  --reference .cache/uhc/reference.json
+```
+
+### Pages image, Flash et interactives
+
+```bash
+npm run hsfr -- special-report \
+  --source .cache/imports/homestuck-fr.json \
+  --mapping data/mapping/pages.json \
+  --assets data/assets/manifest.json \
+  --out .cache/special-pages.md
+```
+
+### Overrides techniques facultatifs
+
+Les overrides réels restent dans `.cache/overrides/`. Ils doivent être liés au hash exact de la page et ne servent jamais à corriger la langue. Voir [`docs/OVERRIDES.md`](./docs/OVERRIDES.md).
+
+---
+
+## 8. Verrouiller et générer le mod
+
+### 1. Valider les entrées
+
+```bash
+npm run hsfr -- validate \
+  --source .cache/imports/homestuck-fr.json \
+  --mapping data/mapping/pages.json \
+  --overrides data/overrides/pages.json
+```
+
+La commande refuse les mappings ambigus ou obsolètes et les overrides incompatibles.
+
+### 2. Créer le verrou
+
+```bash
+npm run hsfr -- lock \
+  --source .cache/imports/homestuck-fr.json \
+  --mapping data/mapping/pages.json \
+  --overrides data/overrides/pages.json \
+  --out .cache/translation-lock.json
+```
+
+### 3. Construire sous verrou
+
+```bash
+npm run hsfr -- build \
+  --source .cache/imports/homestuck-fr.json \
+  --mapping data/mapping/pages.json \
+  --overrides data/overrides/pages.json \
+  --locked true \
+  --lock .cache/translation-lock.json \
+  --out generated/homestuck-fr
+```
+
+Le dossier obtenu contient normalement :
+
+```text
+generated/homestuck-fr/
+├── mod.js
+├── translation.json
+├── compatibility.json
+└── CREDITS.txt
+```
+
+`translation.json` contient la traduction locale : ne pas le publier, le committer ou l'envoyer dans une issue.
+
+---
+
+## 9. Installer le mod dans UHC
+
+1. Fermer UHC après avoir terminé la génération.
+2. Ouvrir le dossier racine de l'Asset Pack configuré dans UHC.
+3. Créer le sous-dossier `mods/` s'il n'existe pas.
+4. Copier le dossier complet `generated/homestuck-fr/` dans `mods/`. Le chemin final doit être :
+
+   ```text
+   <Asset Pack>/mods/homestuck-fr/mod.js
+   ```
+
+   Ne copier ni `.cache/` ni le reste du projet.
+5. Relancer UHC.
+6. Ouvrir **SETTINGS**, puis la section **Mod Settings**.
+7. Activer **Homestuck FR** et appliquer l'ordre des mods souhaité.
+8. Effectuer un redémarrage complet de l'application après l'ajout ou le remplacement des fichiers du mod.
+9. Tester d'abord une page mappée, puis une page non mappée : la seconde doit rester entièrement en anglais.
+
+Le dernier mod appliqué gagne lorsque deux mods modifient le même titre ou contenu. Placer Homestuck FR après un autre mod de texte si la traduction française doit être prioritaire.
+
+Cette structure suit le [guide officiel de modding UHC 2.8.1](https://github.com/GiovanH/unofficial-homestuck-collection/blob/91911836a53743e9cf075e5a91c96ebcaf22e039/MODDING.md#installing-mods).
+
+> La compatibilité réelle avec UHC 2.8.1 doit encore être consignée par un test humain approuvé. Consulter [`docs/VALIDATION_STATUS.md`](./docs/VALIDATION_STATUS.md) avant d'interpréter la version ciblée comme une certification.
+
+---
+
+## 10. Mettre la traduction à jour
+
+1. importer ou récupérer un nouveau snapshot ;
+2. prévisualiser les différences ;
+3. revoir les mappings et overrides signalés ;
+4. recréer le verrou ;
+5. reconstruire puis remplacer l'ancien dossier de mod.
+
+Prévisualisation sans écriture :
+
+```bash
+npm run hsfr -- diff \
+  --source .cache/imports/homestuck-fr.json \
+  --state data/metadata/source-state.json
+```
+
+Enregistrement atomique de l'état et du rapport :
+
+```bash
+npm run hsfr -- update \
+  --source .cache/imports/homestuck-fr.json \
+  --state data/metadata/source-state.json \
+  --report reports/update-AAAA-MM-JJ.md
+```
+
+Le workflow détaillé est documenté dans [`docs/UPDATE_WORKFLOW.md`](./docs/UPDATE_WORKFLOW.md).
+
+---
+
+## 11. Résoudre les problèmes courants
+
+| Symptôme | Vérification |
+|---|---|
+| `--source` manquant | fournir explicitement le snapshot sous `.cache/imports/` |
+| cache hors ligne absent ou corrompu | relancer une récupération autorisée sans `--offline` |
+| mapping `stale` | revoir la page et mettre à jour son hash, sans auto-validation |
+| override en conflit | recréer ou retirer l'override après revue technique |
+| verrou incompatible | relancer `lock` seulement après avoir accepté les changements d'entrée |
+| page toujours anglaise | vérifier que son mapping est `verified` et que son ID existe dans UHC |
+| média non traduit | comportement attendu : aucun binaire n'est modifié automatiquement |
+| UHC ne charge pas le mod | vérifier le dossier, `mod.js`, l'activation et l'ordre des mods |
+
+Avant de signaler un bug :
+
+```bash
+npm run verify
+npm run hsfr -- status --source .cache/imports/homestuck-fr.json
+```
+
+Utiliser ensuite les modèles d'issues. Ne joindre ni texte, ni capture de page, ni snapshot, ni asset, ni chemin local.
+
+---
+
+## Documentation avancée
+
+| Sujet | Document |
+|---|---|
+| Architecture | [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md) |
+| Commandes CLI | [`docs/CLI.md`](./docs/CLI.md) |
+| Source et cache | [`docs/TRANSLATION_SOURCE.md`](./docs/TRANSLATION_SOURCE.md) |
+| Mapping | [`docs/MAPPING.md`](./docs/MAPPING.md) |
+| Overrides | [`docs/OVERRIDES.md`](./docs/OVERRIDES.md) |
+| Compatibilité UHC | [`docs/UHC_COMPATIBILITY.md`](./docs/UHC_COMPATIBILITY.md) |
+| Reproductibilité | [`docs/REPRODUCIBILITY.md`](./docs/REPRODUCIBILITY.md) |
+| Confidentialité | [`docs/PRIVACY.md`](./docs/PRIVACY.md) |
+| Protocole de test | [`docs/TEST_PROTOCOL.md`](./docs/TEST_PROTOCOL.md) |
+| Qualité et CI | [`docs/QUALITY.md`](./docs/QUALITY.md) |
+| Droits et distribution | [`docs/LEGAL_RESEARCH.md`](./docs/LEGAL_RESEARCH.md) |
+| Feuille de route | [`docs/ROADMAP.md`](./docs/ROADMAP.md) |
+
+## Contribuer
+
+Lire [`CONTRIBUTING.md`](./CONTRIBUTING.md) et le [`CODE_OF_CONDUCT.md`](./CODE_OF_CONDUCT.md). Les corrections linguistiques doivent être proposées au projet de traduction source, pas ajoutées à ce dépôt.
 
 ## Licence
 
-Aucune licence de code n'a encore été choisie : `package.json` porte donc la valeur `UNLICENSED`. Aucun code provenant d'UHC ou d'un autre mod n'est copié dans ce dépôt. Les options sont présentées dans [la décision de licence](./docs/LICENSING_DECISION.md).
+Aucune licence de code n'a encore été approuvée : `package.json` reste `UNLICENSED`. La publication d'une release est techniquement bloquée jusqu'à la décision du propriétaire. Les options sont comparées dans [`docs/LICENSING_DECISION.md`](./docs/LICENSING_DECISION.md).

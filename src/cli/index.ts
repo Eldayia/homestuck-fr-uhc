@@ -62,6 +62,10 @@ async function main(argv: string[]): Promise<void> {
   const options = parseOptions(command, optionArguments)
   if (options.verbose) console.error(`[DETAIL] commande=${command}; contenu des pages masqué`)
 
+  if ((command === "build" || command === "validate") && !optionArguments.includes("--source")) {
+    throw new InputValidationError(`La commande ${command} exige --source <snapshot.json>`)
+  }
+
   if (command === "import") {
     const snapshot = await new MspfaSnapshotSource(options.source, options.adventure).load()
     if (!options.dryRun) await writeStableJsonFile(options.out, snapshot)
@@ -280,8 +284,8 @@ function parseOptions(command: string, arguments_: string[]): CliOptions {
 
   const options: CliOptions = {
     source: resolve(values.get("source") ?? "tests/fixtures/source.json"),
-    mapping: resolve(values.get("mapping") ?? "tests/fixtures/mapping.json"),
-    overrides: resolve(values.get("overrides") ?? "tests/fixtures/overrides.json"),
+    mapping: resolve(values.get("mapping") ?? "data/mapping/pages.json"),
+    overrides: resolve(values.get("overrides") ?? "data/overrides/pages.json"),
     out: resolve(values.get("out") ?? (
       command === "import" || command === "fetch"
         ? ".cache/imports/mspfa-snapshot.json"
@@ -341,10 +345,10 @@ function printHelp(command?: string): void {
   hsfr mapping-status  [--mapping pages.json]
   hsfr validate [--source fichier] [--mapping fichier] [--overrides fichier]
   hsfr build    [--source fichier] [--mapping fichier] [--overrides fichier] [--locked true] [--lock translation-lock.json] [--out dossier]
-  hsfr package  [--policy fichier]
+  hsfr package  [--policy fichier]  # contenu seulement; bloqué en MODE B
 
 Options communes d'écriture: --dry-run true|false, --verbose true|false.
-Utiliser "hsfr help <commande>" pour un exemple. La source par défaut contient uniquement des fixtures artificielles.`)
+Utiliser "hsfr help <commande>" pour un exemple. MODE B ne distribue jamais la source ni le mod généré.`)
 }
 
 const COMMAND_HELP: Record<string, string> = {

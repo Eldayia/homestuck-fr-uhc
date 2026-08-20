@@ -1,0 +1,39 @@
+name: Erreur de mapping
+description: Signaler une correspondance MSPFA ↔ UHC sans partager le texte
+title: "[Mapping] "
+labels: [mapping]
+body:
+  - type: input
+    id: source_page
+    attributes:
+      label: Numéro de page source
+    validations:
+      required: true
+  - type: input
+    id: uhc_id
+    attributes:
+      label: ID UHC observé
+      description: Identifiant à six chiffres, sans titre ni contenu.
+    validations:
+      required: true
+  - type: dropdown
+    id: status
+    attributes:
+      label: Type d'erreur
+      options: [candidat incorrect, mapping obsolète, conflit, page non résolue]
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Preuves techniques
+      description: Hashes, identifiants d'assets et navigation uniquement. Aucun texte ou capture.
+    validations:
+      required: true
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Vérification
+      options:
+        - label: Je n'ai inclus ni texte traduit, ni capture, ni asset, ni chemin local.
+          required: true

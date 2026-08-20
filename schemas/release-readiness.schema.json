@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Eldayia/homestuck-fr-uhc/schemas/release-readiness.schema.json",
+  "title": "Homestuck FR MODE B release readiness",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "toolVersion", "licenseApproved", "manualUhcValidationPassed", "publicationApproved", "validationReference"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "toolVersion": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "licenseApproved": { "type": "boolean" },
+    "manualUhcValidationPassed": { "type": "boolean" },
+    "publicationApproved": { "type": "boolean" },
+    "validationReference": { "type": ["string", "null"] }
+  }
+}

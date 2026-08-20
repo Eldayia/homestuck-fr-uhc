@@ -2,6 +2,17 @@
 
 Cette checklist doit être exécutée pour toute release. Les sections MODE B et MODE A sont mutuellement exclusives.
 
+Commandes de préparation MODE B :
+
+```bash
+npm ci
+npm run release:build
+npm run release:test
+npm run release:check
+```
+
+`release:build` construit deux archives et exige des hashes identiques. `release:test` installe l'archive dans un dossier neuf. `release:check` reste bloqué tant que la licence, la validation UHC manuelle et l'approbation de publication ne sont pas enregistrées dans `data/metadata/release-readiness.json`.
+
 ## Vérifications communes
 
 - [ ] La version et les notes de release sont prêtes.

@@ -16,7 +16,7 @@ npm run build
 
 - `test.yml` exécute `verify` sur Windows, Linux et macOS, la couverture et `npm audit` sur Linux.
 - `build.yml` construit et publie comme artifact uniquement les outils, métadonnées et documents autorisés.
-- `release.yml` est manuel et passe obligatoirement par `hsfr package`; la politique MODE B actuelle le bloque avant toute publication de contenu.
+- `release.yml` construit toujours une candidate outils. Sur un tag, il exige en plus le registre d'approbation, puis publie exclusivement l'archive MODE B, son manifest et ses sommes de contrôle.
 
 Aucun workflow périodique ne contacte MSPFA.
 

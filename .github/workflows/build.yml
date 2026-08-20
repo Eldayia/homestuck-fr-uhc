@@ -18,16 +18,10 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm run check:repository
-      - run: npm run build
+      - run: npm run release:build
+      - run: npm run release:test
       - uses: actions/upload-artifact@v4
         with:
-          name: homestuck-fr-uhc-tools
-          path: |
-            dist/
-            package.json
-            package-lock.json
-            README.md
-            NOTICE
-            CREDITS.md
+          name: homestuck-fr-uhc-tools-candidate
+          path: .release/
           if-no-files-found: error

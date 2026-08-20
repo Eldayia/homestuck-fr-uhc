@@ -1,0 +1,33 @@
+name: Droits ou autorisation
+description: Référencer une information publique vérifiable sur les droits
+title: "[Droits] "
+labels: [legal]
+body:
+  - type: input
+    id: source
+    attributes:
+      label: Source publique durable
+      description: URL vers une licence ou déclaration publique.
+    validations:
+      required: true
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Périmètre apparent
+      options: [code, texte traduit, assets traduits, autre]
+    validations:
+      required: true
+  - type: textarea
+    id: summary
+    attributes:
+      label: Résumé prudent
+      description: Ne pas joindre de messages privés ni de contenu protégé.
+    validations:
+      required: true
+  - type: checkboxes
+    id: decision
+    attributes:
+      label: Limite
+      options:
+        - label: Je comprends qu'une source doit être revue humainement avant tout changement de politique.
+          required: true

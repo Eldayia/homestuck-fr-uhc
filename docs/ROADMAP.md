@@ -30,9 +30,9 @@ Cette feuille de route transforme le plan général en étapes vérifiables. Les
 | 9 | État, rapports et reproductibilité | ✅ | M4 — bêta |
 | 10 | Pages spéciales et assets traduits | 🟡 | M4 — bêta |
 | 11 | Qualité, sécurité et CI | ✅ | M4 — bêta |
-| 12 | Documentation et contributions | ⬜ | M4 — bêta |
-| 13 | Alpha, bêta et validation utilisateur | ⬜ | M4 — bêta |
-| 14 | Première release MODE B | ⬜ | M5 — release publique |
+| 12 | Documentation et contributions | ✅ | M4 — bêta |
+| 13 | Alpha, bêta et validation utilisateur | 🟡 | M4 — bêta |
+| 14 | Première release MODE B | 🟡 | M5 — release publique |
 | 15 | Release MODE A avec contenu | ⛔ | M6 — optionnel |
 | 16 | Maintenance à long terme | 🔁 | après M5 |
 
@@ -319,24 +319,24 @@ Un mod prêt à installer contenant la traduction ne pourra être publié qu'apr
 
 **Critère de sortie :** toute PR vérifie automatiquement typage, tests, sécurité de base, reproductibilité et absence de contenu interdit.
 
-## Phase 12 — Documentation et contributions ⬜
+## Phase 12 — Documentation et contributions ✅
 
-- [ ] Compléter le README avec installation et limitations.
+- [x] Compléter le README avec installation et limitations.
 - [x] Créer `docs/TRANSLATION_SOURCE.md`.
 - [x] Créer `docs/UPDATE_WORKFLOW.md`.
-- [ ] Créer `CONTRIBUTING.md`.
-- [ ] Créer la checklist de release.
-- [ ] Expliquer comment corriger un mapping.
-- [ ] Expliquer comment créer un override technique.
-- [ ] Rediriger les corrections linguistiques vers le projet de traduction.
-- [ ] Documenter le fallback anglais.
-- [ ] Documenter la politique de confidentialité des snapshots locaux.
-- [ ] Ajouter modèles d'issues pour mapping, compatibilité et droits.
-- [ ] Ajouter un code de conduite si la communauté s'ouvre aux contributions.
+- [x] Créer `CONTRIBUTING.md`.
+- [x] Créer la checklist de release.
+- [x] Expliquer comment corriger un mapping.
+- [x] Expliquer comment créer un override technique.
+- [x] Rediriger les corrections linguistiques vers le projet de traduction.
+- [x] Documenter le fallback anglais.
+- [x] Documenter la politique de confidentialité des snapshots locaux.
+- [x] Ajouter modèles d'issues pour mapping, compatibilité et droits.
+- [x] Ajouter un code de conduite si la communauté s'ouvre aux contributions.
 
 **Critère de sortie :** une personne extérieure peut installer, tester et contribuer sans dépendre d'explications privées.
 
-## Phase 13 — Alpha, bêta et validation utilisateur ⬜
+## Phase 13 — Alpha, bêta et validation utilisateur 🟡
 
 ### Alpha locale
 
@@ -348,27 +348,27 @@ Un mod prêt à installer contenant la traduction ne pourra être publié qu'apr
 
 ### Bêta privée
 
-- [ ] Préparer un protocole de test sans échanger illicitement le corpus.
+- [x] Préparer un protocole de test sans échanger illicitement le corpus.
 - [ ] Tester Windows, Linux et macOS si possible.
 - [ ] Tester installation neuve et mise à jour d'un mod existant.
 - [ ] Tester UHC sur toutes les versions déclarées compatibles.
 - [ ] Recueillir les erreurs de mapping et de rendu.
-- [ ] Stabiliser le schéma des données avant la première release.
+- [x] Stabiliser le schéma des données avant la première release.
 
 **Critère de sortie :** aucun défaut bloquant connu sur le workflow MODE B et les plateformes annoncées.
 
-## Phase 14 — Première release publique MODE B ⬜
+## Phase 14 — Première release publique MODE B 🟡
 
-- [ ] Figer la version logicielle selon SemVer.
+- [x] Figer la version logicielle selon SemVer.
 - [ ] Vérifier licence du code, NOTICE, crédits et tiers.
-- [ ] Vérifier l'absence de texte et d'assets protégés.
-- [ ] Vérifier que les caches et sorties locales sont ignorés.
+- [x] Vérifier l'absence de texte et d'assets protégés.
+- [x] Vérifier que les caches et sorties locales sont ignorés.
 - [ ] Construire les outils depuis un checkout propre.
 - [ ] Exécuter la checklist de release.
 - [ ] Publier uniquement les outils autorisés.
-- [ ] Fournir les sommes de contrôle.
-- [ ] Publier les notes de version et limitations.
-- [ ] Tester l'installation depuis l'archive publiée.
+- [x] Fournir les sommes de contrôle.
+- [x] Publier les notes de version et limitations.
+- [x] Tester l'installation depuis l'archive candidate.
 
 **Critère de sortie :** une release publique permet de générer localement le mod sans redistribuer la traduction.
 

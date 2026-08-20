@@ -11,6 +11,21 @@
   "bin": {
     "hsfr": "./dist/src/cli/index.js"
   },
+  "files": [
+    "dist/",
+    "data/assets/manifest.json",
+    "data/mapping/pages.json",
+    "data/metadata/distribution-policy.json",
+    "data/metadata/release-readiness.json",
+    "data/overrides/pages.json",
+    "schemas/",
+    "docs/",
+    "CODE_OF_CONDUCT.md",
+    "CONTRIBUTING.md",
+    "CREDITS.md",
+    "NOTICE",
+    "THIRD_PARTY.md"
+  ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "check:repository": "node scripts/check-repository.mjs",
@@ -20,6 +35,9 @@
     "test": "tsx --test tests/pipeline.test.ts tests/parser.test.ts tests/normalizer.test.ts tests/mspfa-source.test.ts tests/mspfa-network.test.ts tests/update-workflow.test.ts tests/mapping-proposals.test.ts tests/uhc-reference.test.ts tests/mapping-review.test.ts tests/uhc-runtime.test.ts tests/status.test.ts tests/exit-codes.test.ts tests/translation-lock.test.ts tests/special-pages.test.ts tests/portability.test.ts",
     "test:coverage": "node --import tsx --test --experimental-test-coverage --test-coverage-lines=85 --test-coverage-branches=70 --test-coverage-functions=90 tests/*.test.ts",
     "verify": "npm run check:repository && npm run typecheck && npm test && npm run build",
+    "release:build": "npm run verify && node scripts/build-release.mjs",
+    "release:test": "node scripts/test-release.mjs",
+    "release:check": "node scripts/check-release-readiness.mjs",
     "hsfr": "tsx src/cli/index.ts"
   },
   "devDependencies": {

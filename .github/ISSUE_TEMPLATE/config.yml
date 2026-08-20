@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Corrections linguistiques
+    url: https://mspfa.com/?s=45546&p=1
+    about: Proposer les corrections de traduction au projet source, pas dans ce dépôt.

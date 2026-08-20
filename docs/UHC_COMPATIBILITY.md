@@ -11,6 +11,10 @@ Une comparaison fonctionnelle artificielle couvre 8 130 pages avec deux stratég
 
 Les résultats sont identiques sur ce corpus synthétique. `edit` reste retenu parce qu'il utilise le contrat le plus simple, charge le JSON une seule fois et ne dépend pas du hook paresseux plus récent. Ce choix devra être confirmé dans l'application UHC réelle avant de déclarer une version minimale.
 
+## Fallback anglais
+
+Le générateur ne crée un patch que pour une page mappée et validée. Une page sans patch n'est jamais touchée : UHC conserve donc son titre, son contenu, ses médias et sa navigation en anglais. Si un ID patché est absent de l'archive locale, le mod émet un avertissement puis poursuit sans créer ni remplacer la page.
+
 ## Garanties automatiques
 
 Le test du `mod.js` réellement généré vérifie que :

@@ -112,6 +112,18 @@ Pour valider une proposition :
 
 Un conflit ne doit jamais être résolu au plus proche sans vérification. Une correction de mapping est distincte d'une correction de traduction.
 
+## Corriger un mapping
+
+1. reproduire localement avec le snapshot et l'index UHC correspondant ;
+2. noter le numéro source, l'ID UHC, le hash source et des preuves techniques sans texte ;
+3. retirer le statut `verified` erroné avant toute nouvelle proposition ;
+4. vérifier la page, ses voisines, ses médias et sa navigation dans UHC ;
+5. renseigner le nouvel ordinal, l'ID UHC dérivé, une preuve `manual`, `sourceHash` et `lastVerified` ;
+6. exécuter `mapping-status`, `status`, `validate` et `npm run verify` ;
+7. utiliser le modèle d'issue mapping si une revue externe est nécessaire.
+
+Une correction linguistique ne constitue pas une correction de mapping et doit être envoyée au projet de traduction source.
+
 ## Limites actuelles
 
 - Un titre traduit ne peut généralement pas être rapproché par égalité de hash ; les médias et la structure restent alors les signaux locaux utiles.
