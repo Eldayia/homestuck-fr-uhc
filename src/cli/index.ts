@@ -20,6 +20,7 @@ import { exitCodeForError } from "./exit-codes.js"
 import { assertTranslationLock, createTranslationLock, readTranslationLock } from "../lock/translation-lock.js"
 import { readAssetManifest } from "../io/asset-manifest.js"
 import { renderSpecialPagesReport } from "../special/special-pages-report.js"
+import { acceptConflictFreeExactMappings } from "../mapper/accept-exact.js"
 
 interface CliOptions {
   source: string
@@ -148,6 +149,22 @@ async function main(argv: string[]): Promise<void> {
     const review = createMappingReviewReport(snapshot, proposals, options.sampleSize)
     if (!options.dryRun) await writeTextFileAtomically(options.out, review.markdown)
     console.log(`[OK] Rapport de revue sans texte: ${review.entries.length} pages sélectionnées${writeSuffix(options)}`)
+    return
+  }
+
+  if (command === "mapping-accept-exact") {
+    if (!optionArguments.includes("--source") || options.reference === undefined) {
+      throw new InputValidationError("La commande mapping-accept-exact exige --source et --reference")
+    }
+    const [snapshot, mappings, reference] = await Promise.all([
+      new LocalJsonSource(options.source).load(),
+      readMappings(options.mapping),
+      readUhcReference(options.reference),
+    ])
+    const proposals = proposeMappings(snapshot, mappings, reference)
+    const accepted = acceptConflictFreeExactMappings(snapshot, proposals)
+    if (!options.dryRun) await writeStableJsonFile(options.out, { schemaVersion: 1, pages: accepted })
+    console.log(`[OK] ${accepted.length} mappings exacts sans conflit acceptés ; ${snapshot.pages.length - accepted.length} pages laissées en anglais${writeSuffix(options)}`)
     return
   }
 
@@ -293,6 +310,8 @@ function parseOptions(command: string, arguments_: string[]): CliOptions {
           ? ".cache/uhc/reference.json"
           : command === "mapping-propose"
             ? ".cache/mapping/proposals.json"
+            : command === "mapping-accept-exact"
+              ? ".cache/mapping/verified.json"
             : command === "mapping-review"
               ? ".cache/mapping/review.md"
               : command === "lock"
@@ -342,6 +361,7 @@ function printHelp(command?: string): void {
   hsfr uhc-index --source mspa.json [--out reference.json]
   hsfr mapping-propose --source snapshot.json [--mapping pages.json] [--reference reference.json] [--out propositions.json]
   hsfr mapping-review  --source snapshot.json [--mapping pages.json] [--reference reference.json] [--sample-size 20] [--out revue.md]
+  hsfr mapping-accept-exact --source snapshot.json --reference reference.json [--mapping pages.json] [--out verified.json]
   hsfr mapping-status  [--mapping pages.json]
   hsfr validate [--source fichier] [--mapping fichier] [--overrides fichier]
   hsfr build    [--source fichier] [--mapping fichier] [--overrides fichier] [--locked true] [--lock translation-lock.json] [--out dossier]
@@ -372,6 +392,8 @@ Exemple: hsfr uhc-index --source archive/data/mspa.json --out .cache/uhc/referen
 Exemple: hsfr mapping-propose --source .cache/imports/fr.json --mapping data/mapping/pages.json`,
   "mapping-review": `hsfr mapping-review --source snapshot.json [--mapping pages.json] [--reference reference.json] [--sample-size 20] [--out revue.md] [--dry-run true]
 Exemple: hsfr mapping-review --source .cache/imports/fr.json --sample-size 20`,
+  "mapping-accept-exact": `hsfr mapping-accept-exact --source snapshot.json --reference reference.json [--mapping pages.json] [--out verified.json] [--dry-run true]
+Accepte uniquement les candidats exacts dont la cible UHC n'est revendiquée par aucune autre page. Les autres pages restent en anglais.`,
   "mapping-status": `hsfr mapping-status [--mapping pages.json]
 Exemple: hsfr mapping-status --mapping data/mapping/pages.json`,
   validate: `hsfr validate --source snapshot.json --mapping pages.json --overrides overrides.json

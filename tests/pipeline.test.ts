@@ -75,6 +75,14 @@ test("bloque les mappings ambigus", async () => {
   await assert.rejects(() => runPipeline(input), MappingError)
 })
 
+test("laisse en anglais les pages sans mapping vérifié", async () => {
+  const input = await fixtureInput()
+  input.mappings = input.mappings.slice(1)
+  const result = await runPipeline(input)
+  assert.equal(result.pages.length, 9)
+  assert.equal(Object.keys(result.translation).length, 9)
+})
+
 test("bloque un mapping vérifié devenu obsolète", async () => {
   const input = await fixtureInput()
   const first = input.mappings[0]

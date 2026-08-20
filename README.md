@@ -218,7 +218,21 @@ Chaque proposition doit être comparée dans UHC avant de passer à `verified`. 
 npm run hsfr -- mapping-status --mapping data/mapping/pages.json
 ```
 
-Ne jamais accepter automatiquement le candidat « le plus proche ». Une insertion ou une page bonus peut décaler toute une séquence. Le guide complet se trouve dans [`docs/MAPPING.md`](./docs/MAPPING.md).
+### Accepter localement les preuves exactes sans conflit
+
+Pour construire un mod local sans publier de mapping réel, cette commande accepte uniquement les candidats `exact` dont l'identifiant UHC n'est revendiqué par aucune autre page :
+
+```bash
+npm run hsfr -- mapping-accept-exact \
+  --source .cache/imports/homestuck-fr.json \
+  --reference .cache/uhc/reference.json \
+  --mapping data/mapping/pages.json \
+  --out .cache/mapping/verified.json
+```
+
+Les pages ambiguës, en conflit ou sans candidat ne sont pas incluses dans le mod et restent donc en anglais dans UHC. Les commandes suivantes utilisent ce fichier local. Une revue humaine reste nécessaire avant de publier un mapping persistant dans `data/mapping/pages.json`.
+
+Ne jamais accepter automatiquement le candidat « le plus proche ». La commande ci-dessus n'accepte ni projection de séquence ambiguë ni conflit. Le guide complet se trouve dans [`docs/MAPPING.md`](./docs/MAPPING.md).
 
 ---
 
@@ -229,7 +243,7 @@ Ne jamais accepter automatiquement le candidat « le plus proche ». Une inserti
 ```bash
 npm run hsfr -- status \
   --source .cache/imports/homestuck-fr.json \
-  --mapping data/mapping/pages.json \
+  --mapping .cache/mapping/verified.json \
   --overrides data/overrides/pages.json \
   --reference .cache/uhc/reference.json
 ```
@@ -239,7 +253,7 @@ npm run hsfr -- status \
 ```bash
 npm run hsfr -- special-report \
   --source .cache/imports/homestuck-fr.json \
-  --mapping data/mapping/pages.json \
+  --mapping .cache/mapping/verified.json \
   --assets data/assets/manifest.json \
   --out .cache/special-pages.md
 ```
@@ -257,7 +271,7 @@ Les overrides réels restent dans `.cache/overrides/`. Ils doivent être liés a
 ```bash
 npm run hsfr -- validate \
   --source .cache/imports/homestuck-fr.json \
-  --mapping data/mapping/pages.json \
+  --mapping .cache/mapping/verified.json \
   --overrides data/overrides/pages.json
 ```
 
@@ -268,7 +282,7 @@ La commande refuse les mappings ambigus ou obsolètes et les overrides incompati
 ```bash
 npm run hsfr -- lock \
   --source .cache/imports/homestuck-fr.json \
-  --mapping data/mapping/pages.json \
+  --mapping .cache/mapping/verified.json \
   --overrides data/overrides/pages.json \
   --out .cache/translation-lock.json
 ```
@@ -278,7 +292,7 @@ npm run hsfr -- lock \
 ```bash
 npm run hsfr -- build \
   --source .cache/imports/homestuck-fr.json \
-  --mapping data/mapping/pages.json \
+  --mapping .cache/mapping/verified.json \
   --overrides data/overrides/pages.json \
   --locked true \
   --lock .cache/translation-lock.json \

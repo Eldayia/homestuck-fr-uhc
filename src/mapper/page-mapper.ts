@@ -34,6 +34,10 @@ export function attachMappings(
     if (bySource.has(mapping.mspfaPageNumber)) {
       throw new MappingError(`Mapping source dupliqué: ${mapping.mspfaPageNumber}`)
     }
+    if (mapping.status === "rejected") {
+      bySource.set(mapping.mspfaPageNumber, mapping)
+      continue
+    }
     if (byUhc.has(mapping.uhcMspaId)) {
       throw new MappingError(`Mapping UHC dupliqué: ${mapping.uhcMspaId}`)
     }
@@ -47,14 +51,12 @@ export function attachMappings(
     byUhc.set(mapping.uhcMspaId, mapping)
   }
 
-  return pages.map((page) => {
+  return pages.flatMap((page) => {
     const mapping = bySource.get(page.id.mspfaPageNumber)
-    if (mapping === undefined) {
-      throw new MappingError(`Aucun mapping pour la page source ${page.id.mspfaPageNumber}`)
-    }
+    if (mapping === undefined || mapping.status === "rejected") return []
     if (mapping.status !== "verified" || mapping.confidence === "ambiguous") {
       throw new MappingError(`Mapping non vérifié pour la page source ${page.id.mspfaPageNumber}`)
     }
-    return { ...page, mapping }
+    return [{ ...page, mapping }]
   })
 }
