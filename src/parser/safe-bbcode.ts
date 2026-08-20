@@ -27,15 +27,7 @@ export function parseSafeBbcode(input: string): string {
   output = replacePairedTag(output, "i", "em")
   output = replacePairedTag(output, "u", "u")
   output = replacePairedTag(output, "s", "s")
-  output = output.replace(
-    /\[color=(#?[0-9a-f]{6}|#[0-9a-f]{3}|green)\]([\s\S]*?)\[\/color\]/gi,
-    (_match, color: string, content: string) => {
-      const normalized = color.toLowerCase() === "green"
-        ? "green"
-        : color.startsWith("#") ? color : `#${color}`
-      return `<span style="color: ${normalized}">${content}</span>`
-    },
-  )
+  output = replaceColorTags(output)
   output = replaceAlignmentTag(output, "center")
   output = replaceAlignmentTag(output, "left")
   output = replaceAlignmentTag(output, "right")
@@ -51,10 +43,8 @@ export function parseSafeBbcode(input: string): string {
     /\[background=(#[0-9a-f]{3}(?:[0-9a-f]{3})?)\]([\s\S]*?)\[\/background\]/gi,
     '<span style="background-color: $1">$2</span>',
   )
-  output = output.replace(
-    /\[spoiler\]([\s\S]*?)\[\/spoiler\]/gi,
-    "<details><summary>Spoiler</summary>$1</details>",
-  )
+  output = replaceExtendedSpoilers(output)
+  output = output.replace(/\[spoiler\]([\s\S]*?)\[\/spoiler\]/gi, "<details><summary>Spoiler</summary>$1</details>")
   output = output.replace(/\[url=(https?:\/\/[^\]\s]+)\]([\s\S]*?)\[\/url\]/gi, (_match, href: string, text: string) => {
     const decodedHref = href.replaceAll("&amp;", "&")
     try {
@@ -69,15 +59,20 @@ export function parseSafeBbcode(input: string): string {
     assertHttpUrl(href)
     return `<a href="${href}" rel="noopener noreferrer">${href}</a>`
   })
-  output = output.replace(
-    /\[img(?:=(\d{1,4})(?:x(\d{1,4}))?)?\]([\s\S]*?)\[\/img\]/gi,
-    (_match, width: string | undefined, height: string | undefined, source: string) => {
-      const src = source.trim()
-      assertHttpUrl(src)
-      const dimensions = renderImageDimensions(width, height)
-      return `<img src="${src}" alt="" loading="lazy"${dimensions}>`
-    },
-  )
+  output = output.replace(/\[lien=(https?:\/\/[^\]\s]+)\]([\s\S]*?)\[\/lien\]/gi, (_match, href: string, text: string) => {
+    assertHttpUrl(href)
+    return `<a href="${href}" rel="noopener noreferrer">${text}</a>`
+  })
+  // Les médias sont déjà rendus par UHC hors de page.content. Les conserver
+  // ici les afficherait une seconde fois sous le média original.
+  output = output.replace(/\[img(?:=\d{1,4}(?:x\d{1,4})?)?\][\s\S]*?\[\/img\]/gi, "")
+
+  // Quelques pages amont contiennent des balises connues incomplètes ou mal
+  // imbriquées. Une fois toutes les paires valides converties, retirer leurs
+  // marqueurs résiduels évite de les afficher sans supprimer le texte humain.
+  output = output.replace(/\[\/?color(?:=[^\]]*)?\]/gi, "")
+  output = output.replace(/\[url=[^\]]*\]([\s\S]*?)\[\/url\]/gi, "$1")
+  output = output.replace(/\[\/?(?:url|lien)(?:=[^\]]*)?\]/gi, "")
 
   // Les séquences inconnues restent du texte littéral. À ce stade le HTML
   // d'origine est échappé et seules les conversions ci-dessus peuvent créer
@@ -95,20 +90,34 @@ function assertHttpUrl(escapedUrl: string): void {
   }
 }
 
-function renderImageDimensions(width: string | undefined, height: string | undefined): string {
-  if (width === undefined) return ""
-  const parsedWidth = Number(width)
-  const parsedHeight = height === undefined ? undefined : Number(height)
-  if (parsedWidth < 1 || parsedWidth > 4096 || (parsedHeight !== undefined && (parsedHeight < 1 || parsedHeight > 4096))) {
-    throw new UnsafeContentError("Dimensions d'image refusées")
-  }
-  return ` width="${parsedWidth}"${parsedHeight === undefined ? "" : ` height="${parsedHeight}"`}`
-}
-
 function replaceAlignmentTag(input: string, alignment: "center" | "left" | "right"): string {
   return input.replace(
     new RegExp(`\\[${alignment}\\]([\\s\\S]*?)\\[\\/${alignment}\\]`, "gi"),
     `<div style="text-align: ${alignment}">$1</div>`,
+  )
+}
+
+function replaceColorTags(input: string): string {
+  const pattern = /\[color=(#?[0-9a-f]{6}|#[0-9a-f]{3}|green)\]((?:(?!\[color=)[\s\S])*?)\[\/color\]/gi
+  let output = input
+  while (pattern.test(output)) {
+    pattern.lastIndex = 0
+    output = output.replace(pattern, (_match, color: string, content: string) => {
+      const normalized = color.toLowerCase() === "green"
+        ? "green"
+        : color.startsWith("#") ? color : `#${color}`
+      return `<span style="color: ${normalized}">${content}</span>`
+    })
+    pattern.lastIndex = 0
+  }
+  return output
+}
+
+function replaceExtendedSpoilers(input: string): string {
+  return input.replace(
+    /\[spoiler\s+open=&quot;([^&]*(?:&(?!quot;)[^&]*)*)&quot;\s+close=&quot;([^&]*(?:&(?!quot;)[^&]*)*)&quot;\]([\s\S]*?)\[\/spoiler\]/gi,
+    (_match, open: string, close: string, content: string) =>
+      `<details><summary>${open}</summary>${content}<div>${close}</div></details>`,
   )
 }
 

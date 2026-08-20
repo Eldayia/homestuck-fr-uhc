@@ -27,15 +27,34 @@ test("retire les iframes MSPFA sans recopier leur contenu actif", () => {
   )
 })
 
-test("convertit les images distantes sans embarquer leurs fichiers", () => {
+test("retire les images du contenu car UHC rend déjà les médias", () => {
   assert.equal(
     parseSafeBbcode("[img]https://example.test/image.png?x=1&y=2[/img]"),
-    '<img src="https://example.test/image.png?x=1&amp;y=2" alt="" loading="lazy">',
+    "",
   )
   assert.equal(
     parseSafeBbcode("[img=640x480]https://example.test/image.png[/img]"),
-    '<img src="https://example.test/image.png" alt="" loading="lazy" width="640" height="480">',
+    "",
   )
+})
+
+test("convertit les spoilers MSPFA avec libellés d'ouverture et de fermeture", () => {
+  assert.equal(
+    parseSafeBbcode('[spoiler open="Lire" close="Fermer"]texte[/spoiler]'),
+    "<details><summary>Lire</summary>texte<div>Fermer</div></details>",
+  )
+})
+
+test("convertit les couleurs imbriquées et l'alias lien", () => {
+  assert.equal(
+    parseSafeBbcode('[color=ff0000]rouge [color=#00ff00]vert[/color][/color] [lien=https://example.test]lien[/lien]'),
+    '<span style="color: #ff0000">rouge <span style="color: #00ff00">vert</span></span> <a href="https://example.test" rel="noopener noreferrer">lien</a>',
+  )
+})
+
+test("nettoie les balises connues mal formées sans perdre leur texte", () => {
+  assert.equal(parseSafeBbcode("[color=#ff0000]texte[/color][/color]"), '<span style="color: #ff0000">texte</span>')
+  assert.equal(parseSafeBbcode("[url=adresse-relative]libellé[/url]"), "libellé")
 })
 
 test("conserve les marqueurs entre crochets qui ne sont pas du BBCode", () => {
