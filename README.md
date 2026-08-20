@@ -311,6 +311,8 @@ generated/homestuck-fr/
 
 `translation.json` contient la traduction locale : ne pas le publier, le committer ou l'envoyer dans une issue.
 
+Le fichier `mod.js` généré contient aussi la traduction d’interface compatible avec UHC 2.8.1 : navigation, titres d’onglets, infobulles des boutons, commandes des dialogues et options dynamiques de la page Réglages. Les menus natifs de Windows/Electron qui ne sont pas exposés aux mods restent en anglais.
+
 ---
 
 ## 9. Installer le mod dans UHC
@@ -329,7 +331,8 @@ generated/homestuck-fr/
 6. Ouvrir **SETTINGS**, puis la section **Mod Settings**.
 7. Activer **Homestuck FR** et appliquer l'ordre des mods souhaité.
 8. Effectuer un redémarrage complet de l'application après l'ajout ou le remplacement des fichiers du mod.
-9. Tester d'abord une page mappée, puis une page non mappée : la seconde doit rester entièrement en anglais.
+9. Vérifier que la navigation affiche notamment **AIDE**, **CARTE** et **RÉGLAGES**.
+10. Tester d'abord une page mappée, puis une page non mappée : la seconde doit conserver le contenu anglais d’UHC.
 
 Le dernier mod appliqué gagne lorsque deux mods modifient le même titre ou contenu. Placer Homestuck FR après un autre mod de texte si la traduction française doit être prioritaire.
 
@@ -379,7 +382,9 @@ Le workflow détaillé est documenté dans [`docs/UPDATE_WORKFLOW.md`](./docs/UP
 | verrou incompatible | relancer `lock` seulement après avoir accepté les changements d'entrée |
 | page toujours anglaise | vérifier que son mapping est `verified` et que son ID existe dans UHC |
 | média non traduit | comportement attendu : aucun binaire n'est modifié automatiquement |
+| build réussi mais `0 pages générées` | utiliser le mapping vérifié local `.cache/mapping/verified.json`, pas le gabarit vide `data/mapping/pages.json` |
 | UHC ne charge pas le mod | vérifier le dossier, `mod.js`, l'activation et l'ordre des mods |
+| l’interface reste en anglais après une mise à jour | fermer complètement UHC puis le relancer ; les hooks d’interface exigent un redémarrage complet |
 
 Avant de signaler un bug :
 

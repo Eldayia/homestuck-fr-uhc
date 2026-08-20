@@ -4,6 +4,7 @@ import { join } from "node:path"
 import type { CanonicalTranslationPage, GeneratedTranslation } from "../domain/types.js"
 import { MOD_VERSION } from "../domain/version.js"
 import { writeStableJsonFile, writeTextFileAtomically } from "../io/write-json.js"
+import { UHC_INTERFACE_RUNTIME } from "./uhc-interface.js"
 
 export { MOD_VERSION } from "../domain/version.js"
 
@@ -14,7 +15,7 @@ export const UHC_COMPATIBILITY = {
   minimumAppVersion: "2.8.1",
   testedAppVersions: ["2.8.1"] as string[],
   manualValidationRequired: false,
-  usesVueHooks: false,
+  usesVueHooks: true,
   hasSettings: false,
   preservesUnpatchedFields: true,
 } as const
@@ -37,7 +38,8 @@ export async function writeUhcMod(outputDirectory: string, translation: Generate
   await writeTextFileAtomically(join(outputDirectory, "CREDITS.txt"), CREDITS_TEMPLATE)
 }
 
-const MOD_TEMPLATE = `module.exports = {
+const MOD_TEMPLATE = `${UHC_INTERFACE_RUNTIME}
+module.exports = {
   title: "Homestuck FR",
   summary: "Traduction française communautaire pour UHC",
   description: "Mod communautaire non officiel généré localement. Traduction et outils crédités dans CREDITS.txt.",
@@ -45,6 +47,7 @@ const MOD_TEMPLATE = `module.exports = {
   modVersion: ${MOD_VERSION},
   minAppVersion: "2.8.1",
   edit: true,
+  vueHooks: HSFR_VUE_HOOKS,
 
   computed(api) {
     const translation = api.readJson("./translation.json")

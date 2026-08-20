@@ -35,9 +35,27 @@ Le dernier point signifie que l'ordre des mods doit être documenté : Homestuck
 
 Les pages Flash et HTML5 peuvent recevoir leur texte extérieur, mais leurs champs `media` et leurs autres propriétés restent inchangés. Le générateur ne modifie, ne copie et ne reconstruit aucun binaire.
 
+## Interface française
+
+À partir de `modVersion: 2`, le mod utilise des `vueHooks` ciblés pour traduire les éléments d’interface exposés de façon exploitable par UHC 2.8.1 :
+
+- la navigation principale (`AIDE`, `CARTE`, `JOURNAL`, `RECHERCHE`, `MUSIQUE`, `RÉGLAGES`, etc.) ;
+- les titres d’onglets des pages système, après leur calcul normal par UHC ;
+- les infobulles des boutons d’onglets, de fenêtre, de marque-pages et de recherche ;
+- le bouton d’ouverture et de fermeture des Pesterlogs, Dialoglogs, Spritelogs et Authorlogs ;
+- les libellés et descriptions des listes dynamiques de Réglages, identifiés par leur clé interne ;
+- les choix de thème et de police qui possèdent un équivalent français ;
+- les principaux titres et boutons statiques de la page Réglages.
+
+Les hooks de données renvoient de nouveaux objets et préservent toutes les propriétés inconnues. Une future option UHC non reconnue reste donc affichée avec son texte anglais au lieu d’être supprimée. La traduction DOM est limitée à des textes ou attributs anglais exacts et reste idempotente.
+
+UHC considère les `vueHooks` comme une API avancée susceptible d’évoluer. Ils sont donc strictement ciblés sur les noms de composants et le contrat de la version 2.8.1. Un redémarrage complet est requis après installation ou remplacement du mod.
+
 ## Choix de compatibilité prudents
 
-- Aucun `vueHook` n'est utilisé : traduire les libellés d'interface des logs augmenterait la fragilité pour un bénéfice non essentiel au texte lisible.
+- Les `vueHooks` ne remplacent ni le routeur, ni les composants, ni leurs modèles ; ils étendent seulement les données, résultats calculés et libellés rendus connus.
+- Les menus natifs Electron, dialogues système et textes qui ne sont pas exposés au processus de rendu restent en anglais.
+- Une version UHC autre que 2.8.1 doit être requalifiée avant d’être annoncée compatible avec l’interface française.
 - Aucun réglage de mod n'est ajouté tant qu'un besoin stable n'est pas démontré.
 - `modVersion` est un entier propre au mod et ne dépend pas de la version SemVer de l'outil.
 - `CREDITS.txt` accompagne le mod et les métadonnées visibles renvoient vers ce fichier.
@@ -51,6 +69,7 @@ Chaque build écrit un fichier versionné conforme à [`schemas/compatibility.sc
 - `testedAppVersions` contient `2.8.1` ;
 - `minimumAppVersion` vaut `2.8.1` ;
 - `manualValidationRequired` vaut `false` pour ce couple Windows/UHC.
+- `usesVueHooks` vaut `true` depuis l’ajout de la traduction d’interface.
 
 Ces valeurs n'annoncent aucune compatibilité avec une version UHC antérieure ni avec Linux ou macOS.
 

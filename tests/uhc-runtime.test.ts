@@ -20,6 +20,12 @@ interface GeneratedMod {
   title: string
   author: string
   modVersion: number
+  vueHooks: Array<{
+    matchName: string
+    data?: Record<string, (value: unknown) => unknown>
+    computed?: Record<string, (superFunction: () => unknown) => unknown>
+    methods?: Record<string, (this: unknown, superFunction: () => void) => void>
+  }>
   computed(api: {
     readJson(path: string): GeneratedTranslation
     logger: { warn(message: string): void }
@@ -69,13 +75,65 @@ test("exécute le mod généré sans remplacer les pages ni leurs médias", asyn
     assert.deepEqual(warnings, ["Page UHC inconnue: 009999"])
     assert.equal(typeof mod.title, "string")
     assert.equal(typeof mod.author, "string")
-    assert.equal(mod.modVersion, 1)
+    assert.equal(mod.modVersion, 2)
 
     const compatibility = JSON.parse(await readFile(join(directory, "compatibility.json"), "utf8")) as unknown
     assert.deepEqual(compatibility, UHC_COMPATIBILITY)
     const credits = await readFile(join(directory, "CREDITS.txt"), "utf8")
     assert.match(credits, /Homestuck en Français/)
     assert.match(credits, /Unofficial Homestuck Collection/)
+  } finally {
+    await rm(directory, { recursive: true, force: true })
+  }
+})
+
+test("traduit les hooks d’interface UHC sans altérer les données inconnues", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "hsfr-uhc-interface-"))
+  try {
+    await writeUhcMod(directory, {})
+    const mod = await loadGeneratedMod(join(directory, "mod.js"))
+
+    const navHook = requireVueHook(mod, "navBanner")
+    const labels = navHook.data?.labels?.({
+      mspa: { "/": "HOMESTUCK COLLECTION", "/custom": "CUSTOM", toggleJumpBox: "JUMP" },
+      dark: { "/settings": "SETTINGS" },
+    }) as Record<string, Record<string, string>>
+    assert.equal(labels.mspa?.["/"], "COLLECTION HOMESTUCK")
+    assert.equal(labels.mspa?.["/settings"], "RÉGLAGES")
+    assert.equal(labels.mspa?.["/custom"], "CUSTOM")
+    assert.equal(labels.dark?.toggleBookmarks, "SAUVEGARDER/CHARGER")
+
+    const settingsHook = requireVueHook(mod, "settings")
+    const settings = settingsHook.data?.settingListBoolean?.([
+      { model: "showAddressBar", label: "Address bar", marker: 1 },
+      { model: "futureSetting", label: "Future setting", marker: 2 },
+    ]) as Array<Record<string, unknown>>
+    assert.equal(settings[0]?.label, "Barre d’adresse")
+    assert.equal(settings[0]?.marker, 1)
+    assert.equal(settings[1]?.label, "Future setting")
+    assert.equal(settings[1]?.marker, 2)
+
+    const themes = settingsHook.data?.themes?.([
+      { text: "Auto", value: "default" },
+      { text: "MSPA", value: "mspa" },
+    ]) as Array<Record<string, unknown>>
+    assert.equal(themes[0]?.text, "Automatique")
+    assert.equal(themes[1]?.text, "MSPA")
+
+    const pageTextHook = requireVueHook(mod, "pageText")
+    assert.equal(pageTextHook.computed?.logButtonText?.(() => "Show Pesterlog"), "Afficher le Pesterlog")
+    assert.equal(pageTextHook.computed?.logButtonText?.(() => "Hide Dialoglog"), "Masquer le Dialoglog")
+    assert.equal(pageTextHook.computed?.logButtonText?.(() => "Unexpected"), "Unexpected")
+
+    const tabFrameHook = requireVueHook(mod, "TabFrame")
+    const titleUpdates: Array<[string, string]> = []
+    let superCalls = 0
+    tabFrameHook.methods?.setTitle?.call({
+      tab: { key: "tab-1", title: "Unknown settings title", url: "/settings" },
+      $localData: { root: { TABS_SET_TITLE: (key: string, title: string) => titleUpdates.push([key, title]) } },
+    }, () => { superCalls += 1 })
+    assert.equal(superCalls, 1)
+    assert.deepEqual(titleUpdates, [["tab-1", "Réglages"]])
   } finally {
     await rm(directory, { recursive: true, force: true })
   }
@@ -138,6 +196,12 @@ async function loadGeneratedMod(path: string): Promise<GeneratedMod> {
   const moduleRecord: { exports: unknown } = { exports: {} }
   vm.runInNewContext(source, { module: moduleRecord, exports: moduleRecord.exports }, { filename: path })
   return moduleRecord.exports as GeneratedMod
+}
+
+function requireVueHook(mod: GeneratedMod, matchName: string): GeneratedMod["vueHooks"][number] {
+  const hook = mod.vueHooks.find((candidate) => candidate.matchName === matchName)
+  assert.ok(hook, `hook Vue absent: ${matchName}`)
+  return hook
 }
 
 function uhcPage(title: string, content: string, media: string[]): UhcPageFixture {

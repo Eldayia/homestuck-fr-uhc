@@ -16,6 +16,8 @@ Cette validation porte uniquement sur le workflow technique MODE B. Elle utilise
 
 Le mod de test contenait dix patches artificiels couvrant notamment narration, commande, Pesterlog, Dialoglog, Spritelog, chaîne vide/absente, balisage autorisé, quirk, page avec image et page interactive. Les contrôles automatiques couvrent en complément un échantillon déterministe de vingt cas et un runtime synthétique de 8 130 pages.
 
+Une seconde passe réelle a validé la version 2 du mod avec le build local de 5 353 pages et les hooks Vue d’interface française. Cette passe n’a publié ni copié le corpus hors du poste local.
+
 ## Résultats observés dans UHC
 
 - le dossier de mod est détecté dans **Settings → Mod Settings** ;
@@ -25,7 +27,18 @@ Le mod de test contenait dix patches artificiels couvrant notamment narration, c
 - le média, la navigation et la structure UHC d'origine restent présents ;
 - une page sans patch n'est pas remplacée et reste gérée par UHC ;
 - la désactivation par glisser-déposer fonctionne ;
-- aucun défaut bloquant du générateur ou du `mod.js` n'a été observé.
+
+Pour l’interface française :
+
+- la navigation principale affiche COLLECTION HOMESTUCK, AIDE, CARTE, JOURNAL, RECHERCHE, ACTUALITÉS, MUSIQUE, PLUS, RÉGLAGES et CRÉDITS ;
+- le titre de fenêtre et le titre d’onglet deviennent Réglages sur /settings ;
+- les infobulles et boutons accessibles du navigateur, dont Marque-pages, sont traduits ;
+- les réglages dynamiques conservent leur comportement et affichent leurs libellés et descriptions en français ;
+- le mode nouveau lecteur, les thèmes, les fonctions expérimentales, les mods et les réglages système exposés au rendu sont traduits ;
+- les futurs champs inconnus restent inchangés au lieu d’être supprimés ;
+- un redémarrage complet recharge correctement les hooks après remplacement du mod.
+
+Aucun défaut bloquant du générateur ou du `mod.js` n'a été observé.
 
 Le rechargement logiciel seul n'a pas chargé le nouveau module lors de cette première installation. Un redémarrage complet l'a chargé correctement. Le README demande donc explicitement de redémarrer UHC après une première installation ou une mise à jour du mod.
 

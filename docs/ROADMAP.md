@@ -246,7 +246,9 @@ Un mod prêt à installer contenant la traduction ne pourra être publié qu'apr
 - [x] Tester synthétiquement les pages Flash/HTML5 sans modifier leur média.
 - [x] Préserver les préfixes des trois types de logs jusqu'au runtime UHC synthétique.
 - [x] Tester les trois types de logs jusqu'au runtime UHC synthétique et documenter la limite de revue visuelle réelle.
-- [x] Évaluer séparément la traduction des libellés via `vueHooks` et ne pas la retenir pour le MVP.
+- [x] Évaluer séparément la traduction des libellés via `vueHooks` pour le MVP initial.
+- [x] Ajouter ensuite une traduction d’interface ciblée pour UHC 2.8.1 : navigation, titres d’onglets, boutons, logs et options dynamiques.
+- [x] Préserver les options futures inconnues et limiter les remplacements DOM aux textes exacts.
 - [x] Ajouter les métadonnées et crédits visibles du mod.
 - [x] Évaluer les réglages et n'en ajouter aucun sans besoin stable.
 - [x] Créer `compatibility.json` et le mettre à jour après validation manuelle.
