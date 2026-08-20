@@ -14,7 +14,11 @@ La redistribution du contenu traduit n'étant pas autorisée à ce jour, la poli
 CONTENT_DISTRIBUTION_ALLOWED=false
 ```
 
-Consulter [la recherche initiale](./docs/RESEARCH.md) pour les décisions techniques et juridiques.
+Consulter :
+
+- [la feuille de route](./docs/ROADMAP.md) pour l'avancement étape par étape ;
+- [la recherche initiale](./docs/RESEARCH.md) pour les décisions techniques et juridiques ;
+- [l'architecture](./docs/ARCHITECTURE.md) pour les invariants du pipeline actuel.
 
 ## Développement
 
