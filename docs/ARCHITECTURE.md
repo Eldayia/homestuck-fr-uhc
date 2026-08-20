@@ -48,3 +48,5 @@ Les fixtures du pipeline couvrent dix formes artificielles. Une fixture supplém
 L'accès réseau est isolé dans `adapters/mspfa/network-source.ts` et ne constitue pas une dépendance du cœur. La normalisation exhaustive du BBCode réel et la récupération réseau différentielle restent hors de la portée actuelle.
 
 Le module `src/update/` compare deux états par hash. Il ne dépend pas du mapping UHC et ne stocke aucun texte dans `source-state.json`. Les changements de position sont seulement proposés comme déplacements possibles et restent soumis à une revue humaine.
+
+Le module `src/mapper/propose-mappings.ts` combine des preuves indépendantes sans modifier le mapping persistant. Il peut signaler un candidat ou un conflit, mais seule une entrée explicitement `verified` est acceptée par le générateur.

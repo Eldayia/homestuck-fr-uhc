@@ -78,6 +78,17 @@ npm run hsfr -- update \
 
 Voir [le workflow de mise à jour](./docs/UPDATE_WORKFLOW.md) pour l'état persistant et les rapports.
 
+Générer des candidats de mapping sans les valider automatiquement :
+
+```bash
+npm run hsfr -- mapping-propose \
+  --source .cache/imports/homestuck-fr.json \
+  --mapping data/mapping/pages.json \
+  --out .cache/mapping/proposals.json
+```
+
+Voir [la documentation du mapping](./docs/MAPPING.md).
+
 ## Licence
 
 Aucune licence de code n'a encore été choisie : `package.json` porte donc la valeur `UNLICENSED`. Aucun code provenant d'UHC ou d'un autre mod n'est copié dans ce dépôt. Les options sont présentées dans [la décision de licence](./docs/LICENSING_DECISION.md).

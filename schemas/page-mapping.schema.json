@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Eldayia/homestuck-fr-uhc/schemas/page-mapping.schema.json",
+  "title": "Homestuck FR UHC page mappings",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "pages"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "pages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["mspfaPageNumber", "homestuckOrdinal", "uhcMspaId", "status", "confidence", "evidence"],
+        "properties": {
+          "mspfaPageNumber": { "type": "integer", "minimum": 1 },
+          "homestuckOrdinal": { "type": "integer", "minimum": 1, "maximum": 8130 },
+          "uhcMspaId": { "type": "string", "pattern": "^\\d{6}$" },
+          "status": { "enum": ["proposed", "verified", "rejected"] },
+          "confidence": { "enum": ["exact", "high", "ambiguous"] },
+          "sourceHash": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+          "lastVerified": { "type": "string", "format": "date" },
+          "evidence": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["type", "value"],
+              "properties": {
+                "type": { "enum": ["asset-id", "manual", "navigation", "sequence", "title", "fixture"] },
+                "value": { "type": "string", "minLength": 1 }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

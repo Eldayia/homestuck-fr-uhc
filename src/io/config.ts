@@ -17,8 +17,18 @@ import {
 
 export async function readMappings(path: string): Promise<PageMapping[]> {
   const value = await readJsonFile(path)
-  assertArray(value, "mapping")
-  return value.map((entry, index) => parseMapping(entry, index))
+  const rawPages = migrateMappingPages(value)
+  return rawPages.map((entry, index) => parseMapping(entry, index))
+}
+
+function migrateMappingPages(value: unknown): unknown[] {
+  if (Array.isArray(value)) return value
+  assertRecord(value, "mapping")
+  if (value.schemaVersion !== 1) {
+    throw new InputValidationError("mapping.schemaVersion doit valoir 1")
+  }
+  assertArray(value.pages, "mapping.pages")
+  return value.pages
 }
 
 export async function readOverrides(path: string): Promise<PageOverride[]> {
@@ -108,14 +118,25 @@ function parseMapping(value: unknown, index: number): PageMapping {
     confidence,
     evidence: rawEvidence.map((evidence, evidenceIndex) => parseEvidence(evidence, `${label}.evidence[${evidenceIndex}]`)),
   }
-  if (typeof value.lastVerified === "string") mapping.lastVerified = value.lastVerified
+  if (value.sourceHash !== undefined) {
+    if (typeof value.sourceHash !== "string" || !/^sha256:[0-9a-f]{64}$/.test(value.sourceHash)) {
+      throw new InputValidationError(`${label}.sourceHash est invalide`)
+    }
+    mapping.sourceHash = value.sourceHash
+  }
+  if (value.lastVerified !== undefined) {
+    if (typeof value.lastVerified !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value.lastVerified)) {
+      throw new InputValidationError(`${label}.lastVerified est invalide`)
+    }
+    mapping.lastVerified = value.lastVerified
+  }
   return mapping
 }
 
 function parseEvidence(value: unknown, label: string): MappingEvidence {
   assertRecord(value, label)
   const type = requiredString(value, "type", label)
-  if (type !== "asset-id" && type !== "manual" && type !== "navigation" && type !== "title" && type !== "fixture") {
+  if (type !== "asset-id" && type !== "manual" && type !== "navigation" && type !== "sequence" && type !== "title" && type !== "fixture") {
     throw new InputValidationError(`${label}.type est invalide`)
   }
   return { type, value: requiredString(value, "value", label) }

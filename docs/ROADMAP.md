@@ -23,7 +23,7 @@ Cette feuille de route transforme le plan général en étapes vérifiables. Les
 | 2 | Cadre juridique et gouvernance | 🟡 | M2 — MVP juridiquement sûr |
 | 3 | Adaptateur MSPFA et import local | ✅ | M2 — MVP juridiquement sûr |
 | 4 | Snapshots et mises à jour incrémentales | ✅ | M2 — MVP juridiquement sûr |
-| 5 | Mapping MSPFA ↔ Homestuck ↔ UHC | ⬜ | M3 — alpha locale |
+| 5 | Mapping MSPFA ↔ Homestuck ↔ UHC | 🟡 | M3 — alpha locale |
 | 6 | Parser et normalisation du contenu réel | ⬜ | M3 — alpha locale |
 | 7 | Intégration et compatibilité UHC | ⬜ | M3 — alpha locale |
 | 8 | Workflow CLI complet | ⬜ | M3 — alpha locale |
@@ -186,32 +186,32 @@ Un mod prêt à installer contenant la traduction ne pourra être publié qu'apr
 
 **Critère de sortie :** une mise à jour indique exactement ce qui a changé et ne détruit jamais l'état précédent sur erreur. **Atteint avec tests synthétiques.**
 
-## Phase 5 — Mapping MSPFA ↔ Homestuck ↔ UHC ⬜
+## Phase 5 — Mapping MSPFA ↔ Homestuck ↔ UHC 🟡
 
 ### 5.1 Format persistant
 
-- [ ] Finaliser le schéma `data/mapping/pages.json`.
-- [ ] Conserver statut, confiance, preuves, hash et date de vérification.
-- [ ] Ajouter une version de schéma et une migration contrôlée.
-- [ ] Interdire les doublons côté MSPFA et côté UHC.
+- [x] Finaliser le schéma `data/mapping/pages.json`.
+- [x] Prévoir statut, confiance, preuves, hash et date de vérification.
+- [x] Ajouter une version de schéma et une migration contrôlée du tableau initial.
+- [x] Interdire les doublons côté MSPFA et côté UHC.
 
 ### 5.2 Génération de candidats
 
-- [ ] Extraire les identifiants depuis les chemins d'assets connus.
-- [ ] Utiliser les ancres déjà vérifiées.
-- [ ] Analyser le graphe précédent/suivant.
-- [ ] Mesurer la monotonie locale sans l'imposer aveuglément.
+- [x] Extraire les identifiants depuis les chemins d'assets connus.
+- [x] Utiliser les ancres déjà vérifiées.
+- [x] Analyser le graphe précédent/suivant.
+- [x] Mesurer la monotonie locale sans l'imposer aveuglément.
 - [ ] Comparer titre, structure et métadonnées disponibles localement.
-- [ ] Détecter les pages ajoutées, bonus, retours et sauts.
-- [ ] Conserver toutes les preuves ayant conduit à un candidat.
+- [x] Signaler les incohérences pouvant correspondre à des pages ajoutées, bonus, retours ou sauts.
+- [x] Conserver toutes les preuves ayant conduit à un candidat.
 
 ### 5.3 Revue humaine
 
-- [ ] Ajouter `hsfr mapping status`.
-- [ ] Ajouter `hsfr mapping review` ou un fichier de revue équivalent.
-- [ ] Afficher les candidats sans inclure le texte protégé dans les rapports publics.
-- [ ] Exiger une validation humaine pour les cas ambigus.
-- [ ] Bloquer la génération de toute page sans mapping vérifié.
+- [x] Ajouter `hsfr mapping-status`.
+- [x] Ajouter un fichier de propositions servant de file de revue.
+- [x] Afficher les candidats sans inclure le texte protégé dans les rapports publics.
+- [x] Exiger une validation humaine pour les cas ambigus.
+- [x] Bloquer la génération de toute page sans mapping vérifié.
 - [ ] Vérifier manuellement un échantillon d'environ vingt pages de différentes époques.
 
 **Critère de sortie :** chaque page générée possède une correspondance vérifiée, explicable et persistante.

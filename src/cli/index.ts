@@ -12,6 +12,7 @@ import { writeStableJsonFile } from "../io/write-json.js"
 import { runPipeline } from "../pipeline/build-pipeline.js"
 import { assertContentDistributionAllowed } from "../policy/distribution.js"
 import { runUpdate } from "../update/update-workflow.js"
+import { proposeMappings, validateMappingSet } from "../mapper/propose-mappings.js"
 
 interface CliOptions {
   source: string
@@ -76,6 +77,30 @@ async function main(argv: string[]): Promise<void> {
     })
     if (options.dryRun) console.log(result.report)
     else console.log(`[OK] État mis à jour: ${result.diff.new.length} nouvelles, ${result.diff.updated.length} modifiées, ${result.diff.missing.length} absentes`)
+    return
+  }
+
+  if (command === "mapping-propose") {
+    if (!optionArguments.includes("--source")) {
+      throw new InputValidationError("La commande mapping-propose exige --source <snapshot.json>")
+    }
+    const [snapshot, mappings] = await Promise.all([
+      new LocalJsonSource(options.source).load(),
+      readMappings(options.mapping),
+    ])
+    const proposals = proposeMappings(snapshot, mappings)
+    await writeStableJsonFile(options.out, proposals)
+    const conflicts = proposals.proposals.filter((proposal) => proposal.status === "conflict").length
+    const unresolved = proposals.proposals.filter((proposal) => proposal.status === "unresolved").length
+    console.log(`[OK] ${proposals.proposals.length} pages analysées: ${conflicts} conflits, ${unresolved} sans candidat`)
+    return
+  }
+
+  if (command === "mapping-status") {
+    const mappings = await readMappings(options.mapping)
+    validateMappingSet(mappings)
+    const count = (status: "verified" | "proposed" | "rejected") => mappings.filter((mapping) => mapping.status === status).length
+    console.log(`Mappings: ${mappings.length}\nVerified: ${count("verified")}\nProposed: ${count("proposed")}\nRejected: ${count("rejected")}`)
     return
   }
 
@@ -167,6 +192,8 @@ function printHelp(): void {
   hsfr import   --source export-mspfa.json [--adventure id] [--out snapshot.json]
   hsfr fetch    --adventure id [--cache dossier] [--offline true|false] [--out snapshot.json]
   hsfr update   --source snapshot.json [--state fichier] [--report fichier] [--dry-run true|false]
+  hsfr mapping-propose --source snapshot.json [--mapping pages.json] [--out propositions.json]
+  hsfr mapping-status  [--mapping pages.json]
   hsfr validate [--source fichier] [--mapping fichier] [--overrides fichier]
   hsfr build    [--source fichier] [--mapping fichier] [--overrides fichier] [--out dossier]
   hsfr package  [--policy fichier]

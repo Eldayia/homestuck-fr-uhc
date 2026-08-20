@@ -32,7 +32,7 @@ export interface TranslationSource {
 }
 
 export interface MappingEvidence {
-  type: "asset-id" | "manual" | "navigation" | "title" | "fixture"
+  type: "asset-id" | "manual" | "navigation" | "sequence" | "title" | "fixture"
   value: string
 }
 
@@ -43,7 +43,35 @@ export interface PageMapping {
   status: "proposed" | "verified" | "rejected"
   confidence: "exact" | "high" | "ambiguous"
   evidence: MappingEvidence[]
+  sourceHash?: string
   lastVerified?: string
+}
+
+export interface MappingDocument {
+  schemaVersion: 1
+  pages: PageMapping[]
+}
+
+export interface MappingCandidate {
+  homestuckOrdinal: number
+  uhcMspaId: string
+  confidence: "exact" | "high" | "ambiguous"
+  evidence: MappingEvidence[]
+}
+
+export interface MappingProposal {
+  mspfaPageNumber: number
+  status: "mapped" | "candidate" | "conflict" | "unresolved"
+  existing?: PageMapping
+  candidates: MappingCandidate[]
+}
+
+export interface MappingProposalDocument {
+  schemaVersion: 1
+  provider: string
+  adventureId: string
+  sourceRevision?: string
+  proposals: MappingProposal[]
 }
 
 export interface CanonicalTranslationPage {
