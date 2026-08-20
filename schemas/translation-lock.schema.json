@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Eldayia/homestuck-fr-uhc/schemas/translation-lock.schema.json",
+  "title": "Homestuck FR reproducible translation lock",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "toolVersion", "modVersion", "source", "mappingsHash", "overridesHash"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "toolVersion": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "modVersion": { "type": "integer", "minimum": 1 },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["provider", "adventureId", "sourceRevision", "snapshotHash"],
+      "properties": {
+        "provider": { "type": "string", "minLength": 1 },
+        "adventureId": { "type": "string", "minLength": 1 },
+        "sourceRevision": { "type": ["string", "null"] },
+        "snapshotHash": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" }
+      }
+    },
+    "mappingsHash": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "overridesHash": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" }
+  }
+}

@@ -13,9 +13,13 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
+    "check:repository": "node scripts/check-repository.mjs",
+    "format:check": "node scripts/check-repository.mjs",
+    "lint": "tsc -p tsconfig.json --noEmit",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "tsx --test tests/pipeline.test.ts tests/parser.test.ts tests/normalizer.test.ts tests/mspfa-source.test.ts tests/mspfa-network.test.ts tests/update-workflow.test.ts tests/mapping-proposals.test.ts tests/uhc-reference.test.ts tests/mapping-review.test.ts tests/uhc-runtime.test.ts tests/status.test.ts tests/exit-codes.test.ts",
-    "verify": "npm run typecheck && npm test && npm run build",
+    "test": "tsx --test tests/pipeline.test.ts tests/parser.test.ts tests/normalizer.test.ts tests/mspfa-source.test.ts tests/mspfa-network.test.ts tests/update-workflow.test.ts tests/mapping-proposals.test.ts tests/uhc-reference.test.ts tests/mapping-review.test.ts tests/uhc-runtime.test.ts tests/status.test.ts tests/exit-codes.test.ts tests/translation-lock.test.ts tests/special-pages.test.ts tests/portability.test.ts",
+    "test:coverage": "node --import tsx --test --experimental-test-coverage --test-coverage-lines=85 --test-coverage-branches=70 --test-coverage-functions=90 tests/*.test.ts",
+    "verify": "npm run check:repository && npm run typecheck && npm test && npm run build",
     "hsfr": "tsx src/cli/index.ts"
   },
   "devDependencies": {

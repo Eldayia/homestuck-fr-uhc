@@ -1,0 +1,21 @@
+name: Release guard
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  legal-and-content-guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run verify
+      - name: Require an authorized content policy
+        run: npm run hsfr -- package --policy data/metadata/distribution-policy.json

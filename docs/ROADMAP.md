@@ -27,9 +27,9 @@ Cette feuille de route transforme le plan général en étapes vérifiables. Les
 | 6 | Parser et normalisation du contenu réel | 🟡 | M3 — alpha locale |
 | 7 | Intégration et compatibilité UHC | 🟡 | M3 — alpha locale |
 | 8 | Workflow CLI complet | 🟡 | M3 — alpha locale |
-| 9 | État, rapports et reproductibilité | ⬜ | M4 — bêta |
-| 10 | Pages spéciales et assets traduits | ⬜ | M4 — bêta |
-| 11 | Qualité, sécurité et CI | ⬜ | M4 — bêta |
+| 9 | État, rapports et reproductibilité | ✅ | M4 — bêta |
+| 10 | Pages spéciales et assets traduits | 🟡 | M4 — bêta |
+| 11 | Qualité, sécurité et CI | ✅ | M4 — bêta |
 | 12 | Documentation et contributions | ⬜ | M4 — bêta |
 | 13 | Alpha, bêta et validation utilisateur | ⬜ | M4 — bêta |
 | 14 | Première release MODE B | ⬜ | M5 — release publique |
@@ -272,50 +272,50 @@ Un mod prêt à installer contenant la traduction ne pourra être publié qu'apr
 
 **Critère de sortie :** un utilisateur peut suivre tout le workflow local sans modifier manuellement des fichiers générés.
 
-## Phase 9 — État, rapports et reproductibilité ⬜
+## Phase 9 — État, rapports et reproductibilité ✅
 
-- [ ] Générer `reports/update-YYYY-MM-DD.md` sans texte traduit.
-- [ ] Générer `reports/special-pages.md`.
-- [ ] Afficher nouvelles, modifiées, manquantes et inchangées.
-- [ ] Signaler les overrides touchés par un changement amont.
+- [x] Générer `reports/update-YYYY-MM-DD.md` sans texte traduit.
+- [x] Générer `reports/special-pages.md`.
+- [x] Afficher nouvelles, modifiées, manquantes et inchangées.
+- [x] Signaler les overrides touchés par un changement amont.
 - [x] Calculer couverture, pages mappées, validées et en revue avec `hsfr status`.
-- [ ] Ne jamais coder en dur la progression MSPFA.
-- [ ] Créer `translation-lock.json`.
-- [ ] Ajouter `hsfr build --locked`.
-- [ ] Garantir des sorties identiques avec les mêmes entrées.
-- [ ] Séparer version logicielle, `modVersion` UHC et état de traduction.
+- [x] Ne jamais coder en dur la progression MSPFA.
+- [x] Créer `translation-lock.json`.
+- [x] Ajouter `hsfr build --locked`.
+- [x] Garantir des sorties identiques avec les mêmes entrées.
+- [x] Séparer version logicielle, `modVersion` UHC et état de traduction.
 
 **Critère de sortie :** chaque build est retraçable et reproductible, et chaque update possède un rapport exploitable.
 
-## Phase 10 — Pages spéciales et assets traduits ⬜
+## Phase 10 — Pages spéciales et assets traduits 🟡
 
-- [ ] Inventorier les pages classées image, Flash, HTML5 ou interactives.
-- [ ] Distinguer texte extérieur et texte intégré au média.
-- [ ] Ne jamais tenter de modifier automatiquement un binaire.
-- [ ] Définir un manifest d'assets avec source, hash et statut juridique.
+- [x] Inventorier les pages classées image, Flash, HTML5 ou interactives.
+- [x] Distinguer texte extérieur et texte intégré au média.
+- [x] Ne jamais tenter de modifier automatiquement un binaire.
+- [x] Définir un manifest d'assets avec source, hash et statut juridique.
 - [ ] Utiliser en priorité les assets déjà présents chez l'utilisateur.
-- [ ] Garder les assets traduits hors Git sans autorisation.
+- [x] Garder les assets traduits hors Git sans autorisation.
 - [ ] Étudier les patches locaux seulement s'ils ne reconstruisent pas illicitement une œuvre.
 - [ ] Traiter les assets autorisés dans une filière séparée.
-- [ ] Laisser les cas non supportés lisibles et signalés.
+- [x] Laisser les cas non supportés lisibles et signalés.
 
 **Critère de sortie :** chaque page spéciale est soit supportée, soit explicitement classée, sans inclusion accidentelle d'assets protégés.
 
-## Phase 11 — Qualité, sécurité et CI ⬜
+## Phase 11 — Qualité, sécurité et CI ✅
 
-- [ ] Ajouter lint et formatage reproductibles.
-- [ ] Ajouter couverture de tests avec seuil raisonnable.
-- [ ] Tester entrées invalides, volumineuses et hostiles.
-- [ ] Tester chemins, encodage Unicode et fins de ligne Windows/Linux.
-- [ ] Tester absence de réseau et cache corrompu.
-- [ ] Ajouter tests de non-régression du mapping.
-- [ ] Ajouter tests de snapshot du mod généré.
-- [ ] Créer `.github/workflows/test.yml`.
-- [ ] Créer `.github/workflows/build.yml` pour les outils uniquement.
-- [ ] Créer `.github/workflows/release.yml` avec verrou juridique.
-- [ ] Ne pas créer de scraping périodique MSPFA avant validation.
-- [ ] Vérifier automatiquement l'absence de corpus et d'assets interdits.
-- [ ] Auditer les dépendances et limiter leur nombre.
+- [x] Ajouter lint et formatage reproductibles.
+- [x] Ajouter couverture de tests avec seuil raisonnable.
+- [x] Tester entrées invalides, volumineuses et hostiles.
+- [x] Tester chemins, encodage Unicode et fins de ligne Windows/Linux.
+- [x] Tester absence de réseau et cache corrompu.
+- [x] Ajouter tests de non-régression du mapping.
+- [x] Ajouter tests de snapshot du mod généré.
+- [x] Créer `.github/workflows/test.yml`.
+- [x] Créer `.github/workflows/build.yml` pour les outils uniquement.
+- [x] Créer `.github/workflows/release.yml` avec verrou juridique.
+- [x] Ne pas créer de scraping périodique MSPFA avant validation.
+- [x] Vérifier automatiquement l'absence de corpus et d'assets interdits.
+- [x] Auditer les dépendances et limiter leur nombre.
 
 **Critère de sortie :** toute PR vérifie automatiquement typage, tests, sécurité de base, reproductibilité et absence de contenu interdit.
 

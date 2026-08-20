@@ -181,3 +181,18 @@ export interface SourceDiff {
     normalizedHash: string
   }>
 }
+
+export interface AssetManifestEntry {
+  assetId: string
+  uhcMspaId: string
+  kind: "image" | "flash" | "html5" | "interactive"
+  source: "uhc-local" | "translation-local"
+  sourceHash: string
+  status: "local-only" | "authorized" | "blocked"
+  distributionReference: string | null
+}
+
+export interface AssetManifest {
+  schemaVersion: 1
+  assets: AssetManifestEntry[]
+}

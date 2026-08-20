@@ -21,6 +21,7 @@ Consulter :
 - [l'architecture](./docs/ARCHITECTURE.md) pour les invariants du pipeline actuel ;
 - [la normalisation du contenu](./docs/CONTENT_NORMALIZATION.md) pour la liste blanche, les logs et les règles de sécurité ;
 - [le workflow CLI](./docs/CLI.md) et [la compatibilité UHC](./docs/UHC_COMPATIBILITY.md) pour la génération locale ;
+- [la reproductibilité](./docs/REPRODUCIBILITY.md), [les assets](./docs/ASSETS.md) et [la qualité](./docs/QUALITY.md) pour les garde-fous ;
 - [la recherche juridique](./docs/LEGAL_RESEARCH.md) et [la checklist de release](./docs/RELEASE_CHECKLIST.md) pour les règles de distribution.
 
 ## Développement

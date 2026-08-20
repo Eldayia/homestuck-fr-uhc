@@ -34,7 +34,15 @@ function migrateMappingPages(value: unknown): unknown[] {
 export async function readOverrides(path: string): Promise<PageOverride[]> {
   const value = await readJsonFile(path)
   assertArray(value, "overrides")
-  return value.map((entry, index) => parseOverride(entry, index))
+  const overrides = value.map((entry, index) => parseOverride(entry, index))
+  const seen = new Set<string>()
+  for (const override of overrides) {
+    if (seen.has(override.uhcMspaId)) {
+      throw new InputValidationError(`Override UHC dupliqué: ${override.uhcMspaId}`)
+    }
+    seen.add(override.uhcMspaId)
+  }
+  return overrides
 }
 
 export async function readDistributionPolicy(path: string): Promise<DistributionPolicy> {

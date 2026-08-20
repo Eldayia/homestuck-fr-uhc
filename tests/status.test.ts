@@ -14,7 +14,7 @@ test("calcule la couverture et les pages spéciales sans exposer le texte", asyn
     readMappings(join(fixtures, "mapping.json")),
     readOverrides(join(fixtures, "overrides.json")),
   ])
-  const status = createProjectStatus(snapshot, mappings, overrides.length)
+  const status = createProjectStatus(snapshot, mappings, overrides)
   const report = renderProjectStatus(status)
 
   assert.equal(status.sourcePages, 10)
@@ -23,6 +23,15 @@ test("calcule la couverture et les pages spéciales sans exposer le texte", asyn
   assert.equal(status.classifications.LOG_TRANSLATABLE, 3)
   assert.equal(status.classifications.IMAGE_TRANSLATION_REQUIRED, 1)
   assert.equal(status.classifications.INTERACTIVE_TRANSLATION_REQUIRED, 1)
+  assert.deepEqual(status.overrideConflicts, [])
   assert.match(report, /Couverture vérifiée actuelle: 100\.00%/)
   assert.doesNotMatch(report, /Démonstration|aLtErNaNcE|Texte vert/)
+
+  const conflict = createProjectStatus(snapshot, mappings, [{
+    uhcMspaId: "001901",
+    reason: "fixture obsolète",
+    appliesToNormalizedHash: `sha256:${"0".repeat(64)}`,
+    changes: { title: "fixture" },
+  }])
+  assert.deepEqual(conflict.overrideConflicts, ["001901"])
 })

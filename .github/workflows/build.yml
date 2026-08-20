@@ -1,0 +1,33 @@
+name: Build tools only
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-tools:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run check:repository
+      - run: npm run build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: homestuck-fr-uhc-tools
+          path: |
+            dist/
+            package.json
+            package-lock.json
+            README.md
+            NOTICE
+            CREDITS.md
+          if-no-files-found: error

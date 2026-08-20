@@ -2,10 +2,12 @@ import type {
   MappingProposal,
   PageClassification,
   PageMapping,
+  PageOverride,
   TranslationSourceSnapshot,
   UhcReferenceDocument,
 } from "../domain/types.js"
 import { proposeMappings } from "../mapper/propose-mappings.js"
+import { normalizePage } from "../normalizer/normalize-page.js"
 
 export interface ProjectStatus {
   provider: string
@@ -15,6 +17,7 @@ export interface ProjectStatus {
   proposals: Record<MappingProposal["status"], number>
   classifications: Record<PageClassification, number>
   overrides: number
+  overrideConflicts: string[]
   verifiedCoveragePercent: number
 }
 
@@ -32,7 +35,7 @@ const CLASSIFICATIONS: PageClassification[] = [
 export function createProjectStatus(
   snapshot: TranslationSourceSnapshot,
   mappings: PageMapping[],
-  overrides: number,
+  overrides: PageOverride[],
   reference?: UhcReferenceDocument,
 ): ProjectStatus {
   const proposalDocument = proposeMappings(snapshot, mappings, reference)
@@ -43,6 +46,15 @@ export function createProjectStatus(
     snapshot.pages.filter((page) => page.classifications.includes(classification)).length,
   ])) as ProjectStatus["classifications"]
   const coverage = snapshot.pages.length === 0 ? 0 : proposalCounts.mapped / snapshot.pages.length * 100
+  const pageByNumber = new Map(snapshot.pages.map((page) => [page.pageNumber, page]))
+  const mappingByUhc = new Map(mappings.map((mapping) => [mapping.uhcMspaId, mapping]))
+  const overrideConflicts = overrides.flatMap((override) => {
+    const mapping = mappingByUhc.get(override.uhcMspaId)
+    const page = mapping === undefined ? undefined : pageByNumber.get(mapping.mspfaPageNumber)
+    if (mapping?.status !== "verified" || page === undefined) return [override.uhcMspaId]
+    const normalized = normalizePage(snapshot.provider, snapshot.adventureId, page)
+    return normalized.source.normalizedHash === override.appliesToNormalizedHash ? [] : [override.uhcMspaId]
+  }).sort()
   return {
     provider: snapshot.provider,
     adventureId: snapshot.adventureId,
@@ -50,7 +62,8 @@ export function createProjectStatus(
     mappings: mappingCounts,
     proposals: proposalCounts,
     classifications: classificationCounts,
-    overrides,
+    overrides: overrides.length,
+    overrideConflicts,
     verifiedCoveragePercent: Number(coverage.toFixed(2)),
   }
 }
@@ -66,6 +79,7 @@ export function renderProjectStatus(status: ProjectStatus): string {
     `- proposed: ${status.mappings.proposed}`,
     `- rejected: ${status.mappings.rejected}`,
     `- overrides: ${status.overrides}`,
+    `- overrides en conflit: ${status.overrideConflicts.length}${status.overrideConflicts.length === 0 ? "" : ` (${status.overrideConflicts.join(", ")})`}`,
     "",
     "État des pages:",
     `- mapped: ${status.proposals.mapped}`,

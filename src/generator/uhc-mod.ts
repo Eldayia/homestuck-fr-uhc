@@ -2,9 +2,10 @@ import { mkdir } from "node:fs/promises"
 import { join } from "node:path"
 
 import type { CanonicalTranslationPage, GeneratedTranslation } from "../domain/types.js"
+import { MOD_VERSION } from "../domain/version.js"
 import { writeStableJsonFile, writeTextFileAtomically } from "../io/write-json.js"
 
-export const MOD_VERSION = 1
+export { MOD_VERSION } from "../domain/version.js"
 
 export const UHC_COMPATIBILITY = {
   schemaVersion: 1,

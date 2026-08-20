@@ -1,5 +1,5 @@
 import assert from "node:assert/strict"
-import { mkdtemp, readFile, readdir, rm } from "node:fs/promises"
+import { mkdtemp, readFile, readdir, rm, writeFile } from "node:fs/promises"
 import { tmpdir } from "node:os"
 import { join, resolve } from "node:path"
 import test from "node:test"
@@ -50,6 +50,9 @@ test("récupère par POST, met en cache et relit entièrement hors ligne", async
     const second = await offline.load()
     assert.deepEqual(second, first)
     assert.equal(requestCount, 1)
+
+    await writeFile(join(directory, "99999.raw.json"), "{ cache corrompu", "utf8")
+    await assert.rejects(() => offline.load(), SourceAccessError)
   } finally {
     await rm(directory, { recursive: true, force: true })
   }

@@ -16,6 +16,7 @@ hsfr update --source .cache/imports/fr.json
 
 # 4. Afficher couverture, mappings et pages spéciales
 hsfr status --source .cache/imports/fr.json --mapping data/mapping/pages.json
+hsfr special-report --source .cache/imports/fr.json --mapping data/mapping/pages.json
 
 # 5. Préparer puis revoir les mappings
 hsfr mapping-propose --source .cache/imports/fr.json
@@ -24,8 +25,9 @@ hsfr mapping-review --source .cache/imports/fr.json --sample-size 20
 # 6. Valider sans produire de mod
 hsfr validate --source .cache/imports/fr.json --mapping data/mapping/pages.json
 
-# 7. Construire le mod local
-hsfr build --source .cache/imports/fr.json --mapping data/mapping/pages.json
+# 7. Verrouiller puis construire le mod local
+hsfr lock --source .cache/imports/fr.json --mapping data/mapping/pages.json
+hsfr build --source .cache/imports/fr.json --mapping data/mapping/pages.json --locked true
 ```
 
 `status`, `diff` et les rapports n'affichent jamais les titres ou corps de pages.

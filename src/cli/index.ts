@@ -17,6 +17,9 @@ import { buildUhcReference, readUhcReference } from "../mapper/uhc-reference.js"
 import { createMappingReviewReport } from "../mapper/review-report.js"
 import { createProjectStatus, renderProjectStatus } from "../status/project-status.js"
 import { exitCodeForError } from "./exit-codes.js"
+import { assertTranslationLock, createTranslationLock, readTranslationLock } from "../lock/translation-lock.js"
+import { readAssetManifest } from "../io/asset-manifest.js"
+import { renderSpecialPagesReport } from "../special/special-pages-report.js"
 
 interface CliOptions {
   source: string
@@ -35,6 +38,9 @@ interface CliOptions {
   sampleSize: number
   dryRun: boolean
   verbose: boolean
+  locked: boolean
+  lockPath: string
+  assets: string
   adventure?: string
 }
 
@@ -151,7 +157,38 @@ async function main(argv: string[]): Promise<void> {
       readOverrides(options.overrides),
       options.reference === undefined ? Promise.resolve(undefined) : readUhcReference(options.reference),
     ])
-    console.log(renderProjectStatus(createProjectStatus(snapshot, mappings, overrides.length, reference)))
+    console.log(renderProjectStatus(createProjectStatus(snapshot, mappings, overrides, reference)))
+    return
+  }
+
+  if (command === "lock") {
+    if (!optionArguments.includes("--source")) {
+      throw new InputValidationError("La commande lock exige --source <snapshot.json>")
+    }
+    const [snapshot, mappings, overrides] = await Promise.all([
+      new LocalJsonSource(options.source).load(),
+      readMappings(options.mapping),
+      readOverrides(options.overrides),
+    ])
+    const lock = createTranslationLock(snapshot, mappings, overrides)
+    if (!options.dryRun) await writeStableJsonFile(options.out, lock)
+    console.log(`[OK] Verrou reproductible calculé${writeSuffix(options)}`)
+    return
+  }
+
+  if (command === "special-report") {
+    if (!optionArguments.includes("--source")) {
+      throw new InputValidationError("La commande special-report exige --source <snapshot.json>")
+    }
+    const [snapshot, mappings, manifest] = await Promise.all([
+      new LocalJsonSource(options.source).load(),
+      readMappings(options.mapping),
+      readAssetManifest(options.assets),
+    ])
+    const report = renderSpecialPagesReport(snapshot, mappings, manifest)
+    if (!options.dryRun) await writeTextFileAtomically(options.out, report)
+    const count = snapshot.pages.filter((page) => page.classifications.some((classification) => classification.endsWith("_REQUIRED") || classification === "UNSUPPORTED")).length
+    console.log(`[OK] Rapport de ${count} pages spéciales calculé${writeSuffix(options)}`)
     return
   }
 
@@ -177,6 +214,13 @@ async function main(argv: string[]): Promise<void> {
     readMappings(options.mapping),
     readOverrides(options.overrides),
   ])
+  if (command === "build" && options.locked) {
+    const [snapshot, expectedLock] = await Promise.all([
+      new LocalJsonSource(options.source).load(),
+      readTranslationLock(options.lockPath),
+    ])
+    assertTranslationLock(expectedLock, createTranslationLock(snapshot, mappings, overrides))
+  }
   const result = await runPipeline({
     source: new LocalJsonSource(options.source),
     mappings,
@@ -213,6 +257,9 @@ function parseOptions(command: string, arguments_: string[]): CliOptions {
     "sample-size",
     "dry-run",
     "verbose",
+    "locked",
+    "lock",
+    "assets",
   ])
   for (let index = 0; index < arguments_.length; index += 2) {
     const key = arguments_[index]
@@ -244,6 +291,10 @@ function parseOptions(command: string, arguments_: string[]): CliOptions {
             ? ".cache/mapping/proposals.json"
             : command === "mapping-review"
               ? ".cache/mapping/review.md"
+              : command === "lock"
+                ? "translation-lock.json"
+                : command === "special-report"
+                  ? "reports/special-pages.md"
               : "generated/homestuck-fr"
     )),
     policy: resolve(values.get("policy") ?? "data/metadata/distribution-policy.json"),
@@ -257,6 +308,9 @@ function parseOptions(command: string, arguments_: string[]): CliOptions {
     sampleSize: parseIntegerOption(values.get("sample-size") ?? "20", "sample-size", 1),
     dryRun: parseBooleanOption(values.get("dry-run") ?? "false", "dry-run"),
     verbose: parseBooleanOption(values.get("verbose") ?? "false", "verbose"),
+    locked: parseBooleanOption(values.get("locked") ?? "false", "locked"),
+    lockPath: resolve(values.get("lock") ?? "translation-lock.json"),
+    assets: resolve(values.get("assets") ?? "data/assets/manifest.json"),
   }
   const adventure = values.get("adventure")
   if (adventure !== undefined) options.adventure = adventure
@@ -279,12 +333,14 @@ function printHelp(command?: string): void {
   hsfr update   --source snapshot.json [--state fichier] [--report fichier] [--dry-run true|false]
   hsfr diff     --source snapshot.json [--state fichier]
   hsfr status   --source snapshot.json [--mapping pages.json] [--overrides overrides.json] [--reference reference.json]
+  hsfr lock     --source snapshot.json [--mapping pages.json] [--overrides overrides.json] [--out translation-lock.json]
+  hsfr special-report --source snapshot.json [--mapping pages.json] [--assets manifest.json] [--out reports/special-pages.md]
   hsfr uhc-index --source mspa.json [--out reference.json]
   hsfr mapping-propose --source snapshot.json [--mapping pages.json] [--reference reference.json] [--out propositions.json]
   hsfr mapping-review  --source snapshot.json [--mapping pages.json] [--reference reference.json] [--sample-size 20] [--out revue.md]
   hsfr mapping-status  [--mapping pages.json]
   hsfr validate [--source fichier] [--mapping fichier] [--overrides fichier]
-  hsfr build    [--source fichier] [--mapping fichier] [--overrides fichier] [--out dossier]
+  hsfr build    [--source fichier] [--mapping fichier] [--overrides fichier] [--locked true] [--lock translation-lock.json] [--out dossier]
   hsfr package  [--policy fichier]
 
 Options communes d'écriture: --dry-run true|false, --verbose true|false.
@@ -302,6 +358,10 @@ Exemple: hsfr update --source .cache/imports/fr.json --state data/metadata/sourc
 Exemple: hsfr diff --source .cache/imports/fr.json --state data/metadata/source-state.json`,
   status: `hsfr status --source snapshot.json [--mapping pages.json] [--overrides overrides.json] [--reference reference.json]
 Exemple: hsfr status --source .cache/imports/fr.json --mapping data/mapping/pages.json`,
+  lock: `hsfr lock --source snapshot.json [--mapping pages.json] [--overrides overrides.json] [--out translation-lock.json] [--dry-run true]
+Exemple: hsfr lock --source .cache/imports/fr.json --out translation-lock.json`,
+  "special-report": `hsfr special-report --source snapshot.json [--mapping pages.json] [--assets manifest.json] [--out reports/special-pages.md] [--dry-run true]
+Exemple: hsfr special-report --source .cache/imports/fr.json --assets data/assets/manifest.json`,
   "uhc-index": `hsfr uhc-index --source mspa.json [--out reference.json] [--dry-run true]
 Exemple: hsfr uhc-index --source archive/data/mspa.json --out .cache/uhc/reference.json`,
   "mapping-propose": `hsfr mapping-propose --source snapshot.json [--mapping pages.json] [--reference reference.json] [--out propositions.json] [--dry-run true]
@@ -312,8 +372,8 @@ Exemple: hsfr mapping-review --source .cache/imports/fr.json --sample-size 20`,
 Exemple: hsfr mapping-status --mapping data/mapping/pages.json`,
   validate: `hsfr validate --source snapshot.json --mapping pages.json --overrides overrides.json
 Exemple: hsfr validate --source .cache/imports/fr.json --mapping data/mapping/pages.json`,
-  build: `hsfr build --source snapshot.json --mapping pages.json --overrides overrides.json [--out dossier] [--dry-run true]
-Exemple: hsfr build --source .cache/imports/fr.json --out generated/homestuck-fr`,
+  build: `hsfr build --source snapshot.json --mapping pages.json --overrides overrides.json [--locked true] [--lock translation-lock.json] [--out dossier] [--dry-run true]
+Exemple: hsfr build --source .cache/imports/fr.json --locked true --out generated/homestuck-fr`,
   package: `hsfr package [--policy fichier]
 Exemple: hsfr package --policy data/metadata/distribution-policy.json`,
 }
