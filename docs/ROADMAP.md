@@ -32,7 +32,7 @@ Cette feuille de route transforme le plan général en étapes vérifiables. Les
 | 11 | Qualité, sécurité et CI | ✅ | M4 — bêta |
 | 12 | Documentation et contributions | ✅ | M4 — bêta |
 | 13 | Alpha, bêta et validation utilisateur | ✅ | M4 — bêta |
-| 14 | Première release MODE B | 🟡 | M5 — release publique |
+| 14 | Première release MODE B | ✅ | M5 — release publique |
 | 15 | Release MODE A avec contenu | ⛔ | M6 — optionnel |
 | 16 | Maintenance à long terme | 🔁 | après M5 |
 
@@ -357,20 +357,22 @@ Un mod prêt à installer contenant la traduction ne pourra être publié qu'apr
 
 **Critère de sortie :** aucun défaut bloquant connu sur le workflow MODE B et les plateformes annoncées.
 
-## Phase 14 — Première release publique MODE B 🟡
+## Phase 14 — Première release publique MODE B ✅
 
 - [x] Figer la version logicielle selon SemVer.
 - [x] Vérifier licence du code, NOTICE, crédits et tiers.
 - [x] Vérifier l'absence de texte et d'assets protégés.
 - [x] Vérifier que les caches et sorties locales sont ignorés.
-- [ ] Construire les outils depuis un checkout propre.
-- [ ] Exécuter la checklist de release.
-- [ ] Publier uniquement les outils autorisés.
+- [x] Construire les outils depuis un checkout propre.
+- [x] Exécuter la checklist de release.
+- [x] Publier uniquement les outils autorisés.
 - [x] Fournir les sommes de contrôle.
 - [x] Publier les notes de version et limitations.
 - [x] Tester l'installation depuis l'archive candidate.
 
 **Critère de sortie :** une release publique permet de générer localement le mod sans redistribuer la traduction.
+
+La publication et les contrôles exécutés sont consignés dans [`RELEASE_0.1.0_REPORT.md`](RELEASE_0.1.0_REPORT.md).
 
 ## Phase 15 — Release MODE A avec contenu ⛔ optionnelle
 

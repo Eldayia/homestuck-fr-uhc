@@ -8,7 +8,7 @@ Ce projet communautaire non officiel n'est affilié ni à Homestuck, ni à MSPFA
 
 | Élément | État |
 |---|---|
-| Outils MODE B | Release publique `0.1.0` |
+| Outils MODE B | [Release publique `v0.1.0`](https://github.com/Eldayia/homestuck-fr-uhc/releases/tag/v0.1.0) |
 | UHC ciblé | `2.8.1`, validé sous Windows |
 | Traduction incluse | Non |
 | Assets Homestuck/UHC inclus | Non |
