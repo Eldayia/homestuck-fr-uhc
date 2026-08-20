@@ -18,6 +18,8 @@ Le mod de test contenait dix patches artificiels couvrant notamment narration, c
 
 Une seconde passe réelle a validé la version 2 du mod avec le build local de 5 353 pages et les hooks Vue d’interface française. Cette passe n’a publié ni copié le corpus hors du poste local.
 
+La commande simplifiée `hsfr install --asset-pack <dossier> --adventure 45546 --offline true` a ensuite exécuté les sept étapes sur l’Asset Pack réel : 5 353 pages sur 5 671 ont été installées et vérifiées, tandis que 318 pages sans mapping exact sûr ont été laissées en anglais.
+
 ## Résultats observés dans UHC
 
 - le dossier de mod est détecté dans **Settings → Mod Settings** ;

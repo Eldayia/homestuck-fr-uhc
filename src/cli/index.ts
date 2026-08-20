@@ -21,6 +21,7 @@ import { assertTranslationLock, createTranslationLock, readTranslationLock } fro
 import { readAssetManifest } from "../io/asset-manifest.js"
 import { renderSpecialPagesReport } from "../special/special-pages-report.js"
 import { acceptConflictFreeExactMappings } from "../mapper/accept-exact.js"
+import { runInstallWorkflow } from "../install/install-workflow.js"
 
 interface CliOptions {
   source: string
@@ -43,6 +44,7 @@ interface CliOptions {
   lockPath: string
   assets: string
   adventure?: string
+  assetPack?: string
 }
 
 async function main(argv: string[]): Promise<void> {
@@ -90,6 +92,29 @@ async function main(argv: string[]): Promise<void> {
     if (!options.dryRun) await writeStableJsonFile(options.out, snapshot)
     const mode = options.offline ? "cache hors ligne" : "MSPFA"
     console.log(`[OK] Snapshot ${snapshot.adventureId}: ${snapshot.pages.length} pages chargées depuis ${mode}${writeSuffix(options)}`)
+    return
+  }
+
+  if (command === "install") {
+    if (options.adventure === undefined || options.assetPack === undefined) {
+      throw new InputValidationError("La commande install exige --asset-pack <dossier> et --adventure <id>")
+    }
+    const result = await runInstallWorkflow({
+      assetPackDirectory: options.assetPack,
+      adventureId: options.adventure,
+      cacheDirectory: options.cache,
+      ...(optionArguments.includes("--overrides") ? { overridesPath: options.overrides } : {}),
+      offline: options.offline,
+      timeoutMs: options.timeoutMs,
+      retries: options.retries,
+      minimumIntervalMs: options.minimumIntervalMs,
+      dryRun: options.dryRun,
+      onProgress: (step, total, message) => console.log(`[${step}/${total}] ${message}`),
+    })
+    const action = result.dryRun ? "seraient installées" : "installées"
+    console.log(`[OK] ${result.installedPages}/${result.sourcePages} pages ${action}; ${result.skippedPages} laissées en anglais`)
+    console.log(`[OK] Dossier du mod: ${result.targetDirectory}`)
+    if (!result.dryRun) console.log("[ACTION] Activez Homestuck FR dans Réglages → Réglages des mods, puis redémarrez complètement UHC.")
     return
   }
 
@@ -281,6 +306,7 @@ function parseOptions(command: string, arguments_: string[]): CliOptions {
     "locked",
     "lock",
     "assets",
+    "asset-pack",
   ])
   for (let index = 0; index < arguments_.length; index += 2) {
     const key = arguments_[index]
@@ -337,6 +363,8 @@ function parseOptions(command: string, arguments_: string[]): CliOptions {
   }
   const adventure = values.get("adventure")
   if (adventure !== undefined) options.adventure = adventure
+  const assetPack = values.get("asset-pack")
+  if (assetPack !== undefined) options.assetPack = resolve(assetPack)
   const reference = values.get("reference")
   if (reference !== undefined) options.reference = resolve(reference)
   return options
@@ -353,6 +381,7 @@ function printHelp(command?: string): void {
   hsfr help <commande>
   hsfr import   --source export-mspfa.json [--adventure id] [--out snapshot.json]
   hsfr fetch    --adventure id [--cache dossier] [--offline true|false] [--out snapshot.json]
+  hsfr install  --asset-pack dossier --adventure id [--offline true|false]
   hsfr update   --source snapshot.json [--state fichier] [--report fichier] [--dry-run true|false]
   hsfr diff     --source snapshot.json [--state fichier]
   hsfr status   --source snapshot.json [--mapping pages.json] [--overrides overrides.json] [--reference reference.json]
@@ -376,6 +405,9 @@ const COMMAND_HELP: Record<string, string> = {
 Exemple: hsfr import --source export.json --adventure 45546 --out .cache/imports/fr.json`,
   fetch: `hsfr fetch --adventure id [--cache dossier] [--offline true|false] [--out snapshot.json] [--dry-run true]
 Exemple: hsfr fetch --adventure 45546 --offline true --out .cache/imports/fr.json`,
+  install: `hsfr install --asset-pack dossier --adventure id [--offline true|false] [--dry-run true]
+Télécharge l’aventure, indexe UHC, accepte uniquement les mappings exacts sans conflit, valide, verrouille, construit et installe le mod.
+Exemple: hsfr install --asset-pack "C:\\Homestuck\\Asset Pack" --adventure 45546`,
   update: `hsfr update --source snapshot.json [--state fichier] [--report fichier] [--dry-run true]
 Exemple: hsfr update --source .cache/imports/fr.json --state data/metadata/source-state.json`,
   diff: `hsfr diff --source snapshot.json [--state fichier]

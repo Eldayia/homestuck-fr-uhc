@@ -1,5 +1,7 @@
 # Rapport de publication — v0.1.0
 
+> Ce document décrit l’artefact historique publié le 20 août 2026. Le pipeline de release actuel produit désormais un ZIP directement extractible ; il ne modifie pas rétroactivement l’archive v0.1.0 déjà publiée.
+
 Date : 20 août 2026
 
 Release : [Homestuck FR UHC Tools v0.1.0](https://github.com/Eldayia/homestuck-fr-uhc/releases/tag/v0.1.0)

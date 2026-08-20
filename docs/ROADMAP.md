@@ -266,6 +266,7 @@ Un mod prêt à installer contenant la traduction ne pourra être publié qu'apr
 - [x] Implémenter `hsfr diff`.
 - [x] Compléter `hsfr validate`.
 - [x] Compléter `hsfr build` avec `compatibility.json`.
+- [x] Ajouter `hsfr install` pour télécharger, mapper, valider, construire et installer le mod en une commande.
 - [ ] Implémenter `hsfr package` derrière le verrou juridique.
 - [x] Ajouter `--dry-run` aux opérations qui écrivent.
 - [x] Ajouter `--verbose` sans exposer le contenu dans les logs publics.

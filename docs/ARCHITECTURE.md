@@ -28,6 +28,8 @@ domain → parser → normalizer → mapper → overrides → validator → gene
                                                           CLI
 ```
 
+Le module `src/install/install-workflow.ts` orchestre ce graphe sans dupliquer sa logique. Il valide l’Asset Pack, charge la source réseau ou son cache, construit la référence UHC, accepte les mappings exacts sans conflit, exécute le pipeline normal, crée le verrou et installe les fichiers générés avec des écritures atomiques. Tous les calculs réussissent avant la première modification du dossier `mods`.
+
 Les dépendances pointent vers le domaine et vers l'étape suivante du pipeline. L'adaptateur MSPFA futur devra produire le même `TranslationSourceSnapshot` que l'adaptateur JSON local.
 
 ## Sortie UHC
@@ -41,6 +43,8 @@ generated/<nom>/
 ├── mod.js
 └── translation.json
 ```
+
+La commande simplifiée construit d’abord cette même sortie sous `.cache/mspfa/install/<aventure>/homestuck-fr/`, puis vérifie sa copie dans `<Asset Pack>/mods/homestuck-fr/`.
 
 `translation.json` est indexé par `uhcMspaId`. `mod.js` charge ce fichier avec l'API du mod UHC et applique uniquement les propriétés explicitement présentes. `compatibility.json` distingue la cible envisagée des versions réellement testées et ne déclare encore aucune version minimale.
 

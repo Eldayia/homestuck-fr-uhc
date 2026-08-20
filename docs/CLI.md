@@ -4,6 +4,22 @@ L'aide générale est disponible avec `hsfr help` et l'aide d'une commande avec 
 
 ## Parcours local MODE B
 
+### Installation recommandée
+
+```powershell
+hsfr install --asset-pack "C:\chemin\vers\Asset_Pack" --adventure 45546
+```
+
+`install` vérifie l’Asset Pack, récupère l’aventure, construit l’index UHC, accepte seulement les mappings exacts sans conflit, valide le contenu, crée le verrou et le mod, puis installe et vérifie les quatre fichiers sous `mods/homestuck-fr`. Les pages sans mapping sûr restent en anglais.
+
+Options utiles :
+
+- `--dry-run true` exécute toutes les vérifications sans écrire le cache ni le mod ;
+- `--offline true` réutilise le cache brut d’une récupération précédente ;
+- `--overrides fichier.json` applique explicitement un fichier d’overrides ; sans cette option, aucun override n’est utilisé.
+
+### Parcours avancé décomposé
+
 ```bash
 # 1. Importer ou récupérer prudemment la source
 hsfr import --source export-mspfa.json --out .cache/imports/fr.json

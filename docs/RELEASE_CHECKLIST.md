@@ -11,7 +11,7 @@ npm run release:test
 npm run release:check
 ```
 
-`release:build` construit deux archives et exige des hashes identiques. `release:test` installe l'archive dans un dossier neuf. `release:check` reste bloqué tant que la licence, la validation UHC manuelle et l'approbation de publication ne sont pas enregistrées dans `data/metadata/release-readiness.json`.
+`release:build` construit deux ZIP et exige des hashes identiques. Le ZIP contient directement les lanceurs, `dist`, `data`, les schémas et la documentation à sa racine, sans `.tgz`, tar ni dossier `package/`. `release:test` extrait le ZIP dans un dossier neuf et exécute le CLI compilé. `release:check` reste bloqué tant que la licence, la validation UHC manuelle et l'approbation de publication ne sont pas enregistrées dans `data/metadata/release-readiness.json`.
 
 ## Vérifications communes
 
@@ -39,6 +39,7 @@ npm run release:check
 - [ ] Aucun patch ou diff réversible du contenu n'est inclus.
 - [ ] Les fixtures sont manifestement artificielles.
 - [ ] L'archive publiée contient uniquement les outils autorisés.
+- [ ] Le ZIP s’extrait directement et contient `hsfr.cmd`, `hsfr`, `dist/` et `data/` à sa racine.
 - [ ] La procédure de génération locale est documentée.
 
 ## MODE A — contenu autorisé
