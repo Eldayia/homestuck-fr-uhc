@@ -1,16 +1,17 @@
-# Homestuck FR UHC Tools 0.1.0
+# Homestuck FR UHC Tools 0.2.0
 
-Première candidate MODE B des outils de génération locale.
+Cette version simplifie entièrement la création et l’installation du mod français pour UHC.
 
 ## Inclus
 
-- import local et récupération MSPFA facultative avec cache et mode hors ligne ;
-- normalisation sûre du texte et des trois familles de logs ;
-- propositions, revue et validation humaine des mappings ;
-- build UHC local reproductible avec verrou ;
-- rapports sans texte et manifest d'assets local ;
-- contrôles anti-corpus, tests et CI multiplateforme ;
-- documentation d'installation, contribution, confidentialité et validation.
+- nouvelle commande `hsfr install` : récupération MSPFA, validation, mapping, verrou, build et copie dans l’Asset Pack en une opération ;
+- traduction de la navigation, des titres d’onglets, des boutons et des options dynamiques des réglages UHC ;
+- installation atomique et vérifiée dans `Asset_Pack/mods/homestuck-fr` ;
+- modes `--dry-run` et `--offline` pour contrôler ou répéter une installation ;
+- archive ZIP directement extractible, sans `.tgz`, tar ou dossier `package/` intermédiaire ;
+- lanceurs prêts à l’emploi `hsfr.cmd` sous Windows et `hsfr` sous Linux/macOS ;
+- README français réorganisé autour d’un démarrage express ;
+- validation réelle sous UHC 2.8.1 et couverture par 54 tests automatisés.
 
 ## Non inclus
 

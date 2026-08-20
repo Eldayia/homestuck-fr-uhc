@@ -2,7 +2,7 @@
 
 ```yaml
 schemaVersion: 1
-toolVersion: 0.1.0
+toolVersion: X.Y.Z
 uhcVersion: 2.8.1
 platform: windows|linux|macos
 installation: fresh|upgrade

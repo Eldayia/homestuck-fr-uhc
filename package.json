@@ -1,6 +1,6 @@
 {
   "name": "homestuck-fr-uhc",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Outils de génération locale d'un mod français pour The Unofficial Homestuck Collection",
   "license": "GPL-3.0-or-later",

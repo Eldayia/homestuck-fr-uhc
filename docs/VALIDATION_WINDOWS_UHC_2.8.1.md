@@ -2,7 +2,7 @@
 
 Date : 20 août 2026
 
-Outil : Homestuck FR UHC `0.1.0`
+Outil : Homestuck FR UHC `0.2.0`
 
 Application : The Unofficial Homestuck Collection `2.8.1`
 
