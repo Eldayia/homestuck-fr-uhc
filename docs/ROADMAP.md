@@ -21,7 +21,7 @@ Cette feuille de route transforme le plan général en étapes vérifiables. Les
 | 0 | Investigation initiale | ✅ | M0 — recherche |
 | 1 | Socle et vertical slice artificiel | ✅ | M1 — preuve technique |
 | 2 | Cadre juridique et gouvernance | 🟡 | M2 — MVP juridiquement sûr |
-| 3 | Adaptateur MSPFA et import local | 🟡 | M2 — MVP juridiquement sûr |
+| 3 | Adaptateur MSPFA et import local | ✅ | M2 — MVP juridiquement sûr |
 | 4 | Snapshots et mises à jour incrémentales | ⬜ | M2 — MVP juridiquement sûr |
 | 5 | Mapping MSPFA ↔ Homestuck ↔ UHC | ⬜ | M3 — alpha locale |
 | 6 | Parser et normalisation du contenu réel | ⬜ | M3 — alpha locale |
@@ -138,7 +138,7 @@ Un mod prêt à installer contenant la traduction ne pourra être publié qu'apr
 
 **Critère de sortie :** le dépôt peut évoluer et publier ses outils sans ambiguïté juridique. L'absence d'autorisation ne bloque pas le MODE B, mais bloque toujours le MODE A.
 
-## Phase 3 — Adaptateur MSPFA et import local 🟡
+## Phase 3 — Adaptateur MSPFA et import local ✅
 
 ### 3.1 Contrat de source
 
@@ -158,16 +158,16 @@ Un mod prêt à installer contenant la traduction ne pourra être publié qu'apr
 
 ### 3.3 Accès réseau facultatif
 
-- [ ] Implémenter l'appel POST `do=story&s=<id>` dans `adapters/mspfa/`.
-- [ ] Ajouter un User-Agent explicite avec URL du projet.
-- [ ] Ajouter timeout, retries limités et erreurs compréhensibles.
-- [ ] Ajouter cache local et intervalle minimal configurable.
-- [ ] Ne jamais contourner une protection anti-bot.
-- [ ] Permettre de désactiver complètement le réseau.
-- [ ] Documenter le caractère non documenté et non versionné de l'endpoint.
-- [ ] Garder les snapshots contenant du texte hors Git.
+- [x] Implémenter l'appel POST `do=story&s=<id>` dans `adapters/mspfa/`.
+- [x] Ajouter un User-Agent explicite avec URL du projet.
+- [x] Ajouter timeout, retries limités et erreurs compréhensibles.
+- [x] Ajouter cache local et intervalle minimal configurable.
+- [x] Ne jamais contourner une protection anti-bot.
+- [x] Permettre de désactiver complètement le réseau.
+- [x] Documenter le caractère non documenté et non versionné de l'endpoint.
+- [x] Garder les snapshots contenant du texte hors Git.
 
-**Critère de sortie :** un snapshot réel peut être obtenu ou fourni localement, puis validé, sans dépendance du cœur à MSPFA.
+**Critère de sortie :** un snapshot réel peut être obtenu ou fourni localement, puis validé, sans dépendance du cœur à MSPFA. **Atteint avec tests synthétiques ; aucun corpus réel n'est versionné.**
 
 ## Phase 4 — Snapshots et mises à jour incrémentales ⬜
 

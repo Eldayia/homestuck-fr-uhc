@@ -3,6 +3,7 @@
 import { resolve } from "node:path"
 
 import { LocalJsonSource } from "../../adapters/local-json/index.js"
+import { MspfaNetworkSource } from "../../adapters/mspfa/network-source.js"
 import { MspfaSnapshotSource } from "../../adapters/mspfa/snapshot-source.js"
 import { HsfrError, InputValidationError } from "../domain/errors.js"
 import { writeUhcMod } from "../generator/uhc-mod.js"
@@ -17,6 +18,11 @@ interface CliOptions {
   overrides: string
   out: string
   policy: string
+  cache: string
+  offline: boolean
+  timeoutMs: number
+  retries: number
+  minimumIntervalMs: number
   adventure?: string
 }
 
@@ -33,6 +39,24 @@ async function main(argv: string[]): Promise<void> {
     const snapshot = await new MspfaSnapshotSource(options.source, options.adventure).load()
     await writeStableJsonFile(options.out, snapshot)
     console.log(`[OK] Snapshot MSPFA ${snapshot.adventureId}: ${snapshot.pages.length} pages importées dans ${options.out}`)
+    return
+  }
+
+  if (command === "fetch") {
+    if (options.adventure === undefined) {
+      throw new InputValidationError("La commande fetch exige --adventure <id>")
+    }
+    const snapshot = await new MspfaNetworkSource({
+      adventureId: options.adventure,
+      cacheDirectory: options.cache,
+      offline: options.offline,
+      timeoutMs: options.timeoutMs,
+      retries: options.retries,
+      minimumIntervalMs: options.minimumIntervalMs,
+    }).load()
+    await writeStableJsonFile(options.out, snapshot)
+    const mode = options.offline ? "cache hors ligne" : "MSPFA"
+    console.log(`[OK] Snapshot ${snapshot.adventureId}: ${snapshot.pages.length} pages chargées depuis ${mode} dans ${options.out}`)
     return
   }
 
@@ -66,7 +90,19 @@ async function main(argv: string[]): Promise<void> {
 
 function parseOptions(command: string, arguments_: string[]): CliOptions {
   const values = new Map<string, string>()
-  const allowed = new Set(["source", "mapping", "overrides", "out", "policy", "adventure"])
+  const allowed = new Set([
+    "source",
+    "mapping",
+    "overrides",
+    "out",
+    "policy",
+    "adventure",
+    "cache",
+    "offline",
+    "timeout-ms",
+    "retries",
+    "minimum-interval-ms",
+  ])
   for (let index = 0; index < arguments_.length; index += 2) {
     const key = arguments_[index]
     const value = arguments_[index + 1]
@@ -88,8 +124,13 @@ function parseOptions(command: string, arguments_: string[]): CliOptions {
     source: resolve(values.get("source") ?? "tests/fixtures/source.json"),
     mapping: resolve(values.get("mapping") ?? "tests/fixtures/mapping.json"),
     overrides: resolve(values.get("overrides") ?? "tests/fixtures/overrides.json"),
-    out: resolve(values.get("out") ?? (command === "import" ? ".cache/imports/mspfa-snapshot.json" : "generated/homestuck-fr")),
+    out: resolve(values.get("out") ?? ((command === "import" || command === "fetch") ? ".cache/imports/mspfa-snapshot.json" : "generated/homestuck-fr")),
     policy: resolve(values.get("policy") ?? "data/metadata/distribution-policy.json"),
+    cache: resolve(values.get("cache") ?? ".cache/mspfa"),
+    offline: parseBooleanOption(values.get("offline") ?? "false", "offline"),
+    timeoutMs: parseIntegerOption(values.get("timeout-ms") ?? "30000", "timeout-ms", 1),
+    retries: parseIntegerOption(values.get("retries") ?? "2", "retries", 0),
+    minimumIntervalMs: parseIntegerOption(values.get("minimum-interval-ms") ?? "60000", "minimum-interval-ms", 0),
   }
   const adventure = values.get("adventure")
   if (adventure !== undefined) options.adventure = adventure
@@ -99,11 +140,27 @@ function parseOptions(command: string, arguments_: string[]): CliOptions {
 function printHelp(): void {
   console.log(`Usage:
   hsfr import   --source export-mspfa.json [--adventure id] [--out snapshot.json]
+  hsfr fetch    --adventure id [--cache dossier] [--offline true|false] [--out snapshot.json]
   hsfr validate [--source fichier] [--mapping fichier] [--overrides fichier]
   hsfr build    [--source fichier] [--mapping fichier] [--overrides fichier] [--out dossier]
   hsfr package  [--policy fichier]
 
 La source par défaut contient uniquement des fixtures artificielles.`)
+}
+
+function parseIntegerOption(value: string, label: string, minimum: number): number {
+  if (!/^\d+$/.test(value)) throw new InputValidationError(`--${label} doit être un entier`)
+  const parsed = Number(value)
+  if (!Number.isSafeInteger(parsed) || parsed < minimum) {
+    throw new InputValidationError(`--${label} doit être supérieur ou égal à ${minimum}`)
+  }
+  return parsed
+}
+
+function parseBooleanOption(value: string, label: string): boolean {
+  if (value === "true") return true
+  if (value === "false") return false
+  throw new InputValidationError(`--${label} doit valoir true ou false`)
 }
 
 main(process.argv.slice(2)).catch((error: unknown) => {

@@ -20,30 +20,38 @@ export class MspfaSnapshotSource implements TranslationSource {
 
   async load(): Promise<TranslationSourceSnapshot> {
     const raw = await readJsonFile(this.path)
-    assertRecord(raw, "mspfa")
-
-    const adventureId = parseAdventureId(raw.i, this.expectedAdventureId)
-    if (this.expectedAdventureId !== undefined && adventureId !== this.expectedAdventureId) {
-      throw new InputValidationError(
-        `L'export MSPFA concerne l'aventure ${adventureId}, pas ${this.expectedAdventureId}`,
-      )
-    }
-
-    if (typeof raw.n !== "string" || raw.n.length === 0) {
-      throw new InputValidationError("mspfa.n doit contenir le titre de l'aventure")
-    }
-    assertArray(raw.p, "mspfa.p")
-
-    const pages = raw.p.map((page, index) => parseMspfaPage(page, index))
-    return {
-      schemaVersion: 1,
-      provider: "mspfa",
-      adventureId,
-      sourceRevision: sha256(stableStringify({ title: raw.n, pages: raw.p })),
-      metadata: { title: raw.n },
-      pages,
-    }
+    return parseMspfaSnapshot(raw, this.expectedAdventureId)
   }
+}
+
+export function parseMspfaSnapshot(
+  raw: unknown,
+  expectedAdventureId?: string,
+): TranslationSourceSnapshot {
+  assertRecord(raw, "mspfa")
+
+  const adventureId = parseAdventureId(raw.i, expectedAdventureId)
+  if (expectedAdventureId !== undefined && adventureId !== expectedAdventureId) {
+    throw new InputValidationError(
+      `L'export MSPFA concerne l'aventure ${adventureId}, pas ${expectedAdventureId}`,
+    )
+  }
+
+  if (typeof raw.n !== "string" || raw.n.length === 0) {
+    throw new InputValidationError("mspfa.n doit contenir le titre de l'aventure")
+  }
+  assertArray(raw.p, "mspfa.p")
+
+  const pages = raw.p.map((page, index) => parseMspfaPage(page, index))
+  const snapshot: TranslationSourceSnapshot = {
+    schemaVersion: 1,
+    provider: "mspfa",
+    adventureId,
+    sourceRevision: sha256(stableStringify({ title: raw.n, pages: raw.p })),
+    metadata: { title: raw.n },
+    pages,
+  }
+  return snapshot
 }
 
 function parseAdventureId(rawId: unknown, expectedId: string | undefined): string {

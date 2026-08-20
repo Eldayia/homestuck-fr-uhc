@@ -34,3 +34,9 @@ export class DistributionBlockedError extends HsfrError {
     super(message, "CONTENT_DISTRIBUTION_BLOCKED")
   }
 }
+
+export class SourceAccessError extends HsfrError {
+  constructor(message: string) {
+    super(message, "SOURCE_ACCESS_ERROR")
+  }
+}

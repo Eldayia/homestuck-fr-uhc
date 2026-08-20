@@ -53,6 +53,21 @@ npm run hsfr -- import \
 
 Un snapshot réel contient la traduction et doit rester hors Git. Voir [la documentation de la source](./docs/TRANSLATION_SOURCE.md).
 
+Récupérer prudemment un snapshot depuis MSPFA :
+
+```bash
+npm run hsfr -- fetch \
+  --adventure 45546 \
+  --cache .cache/mspfa \
+  --out .cache/imports/homestuck-fr.json
+```
+
+Relire le dernier cache sans aucun accès réseau :
+
+```bash
+npm run hsfr -- fetch --adventure 45546 --offline true
+```
+
 ## Licence
 
 Aucune licence de code n'a encore été choisie : `package.json` porte donc la valeur `UNLICENSED`. Aucun code provenant d'UHC ou d'un autre mod n'est copié dans ce dépôt. Les options sont présentées dans [la décision de licence](./docs/LICENSING_DECISION.md).
