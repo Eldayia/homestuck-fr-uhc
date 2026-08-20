@@ -25,6 +25,7 @@ jobs:
           name: homestuck-fr-uhc-tools-candidate
           path: .release/
           if-no-files-found: error
+          include-hidden-files: true
       - if: startsWith(github.ref, 'refs/tags/')
         run: npm run release:check
       - if: startsWith(github.ref, 'refs/tags/')
