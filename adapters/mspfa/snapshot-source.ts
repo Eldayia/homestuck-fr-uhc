@@ -84,6 +84,9 @@ function parseMspfaPage(value: unknown, index: number): SourcePage {
   const classifications: PageClassification[] = [
     logLabel === undefined ? "TEXT_TRANSLATABLE" : "LOG_TRANSLATABLE",
   ]
+  if (/\[img(?:=|\])|\.(?:avif|gif|jpe?g|png|webp)(?:[?\]"'\s]|$)/i.test(value.b)) {
+    classifications.push("IMAGE_TRANSLATION_REQUIRED")
+  }
   if (/\[(?:flash|object)(?:=|\])|\.swf\b/i.test(value.b)) {
     classifications.push("FLASH_TRANSLATION_REQUIRED")
   }

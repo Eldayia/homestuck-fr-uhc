@@ -15,6 +15,8 @@ test("convertit uniquement le BBCode autorisé et échappe le HTML", () => {
 
 test("refuse le contenu actif", () => {
   assert.throws(() => parseSafeBbcode("<script>alert(1)</script>"), UnsafeContentError)
+  assert.throws(() => parseSafeBbcode('<img src="x" onerror="alert(1)">'), UnsafeContentError)
+  assert.throws(() => parseSafeBbcode("<iframe src=https://example.test></iframe>"), UnsafeContentError)
   assert.throws(() => parseSafeBbcode("[url=javascript:alert(1)]x[/url]"), UnsafeContentError)
   assert.throws(() => parseSafeBbcode("[video]x[/video]"), UnsafeContentError)
 })

@@ -5,9 +5,10 @@ import { join, resolve } from "node:path"
 import test from "node:test"
 
 import { LocalJsonSource } from "../adapters/local-json/index.js"
-import { MspfaSnapshotSource } from "../adapters/mspfa/snapshot-source.js"
+import { MspfaSnapshotSource, parseMspfaSnapshot } from "../adapters/mspfa/snapshot-source.js"
 import { InputValidationError } from "../src/domain/errors.js"
 import { writeStableJsonFile } from "../src/io/write-json.js"
+import { normalizePage } from "../src/normalizer/normalize-page.js"
 
 const fixture = resolve("tests/fixtures/mspfa-compact.json")
 
@@ -22,6 +23,12 @@ test("convertit un export compact MSPFA en snapshot canonique versionné", async
   assert.equal(snapshot.pages[0]?.pageNumber, 1)
   assert.equal(snapshot.pages[0]?.modifiedAt, "2026-08-20T00:00:00.000Z")
   assert.equal(snapshot.pages[1]?.logLabel, "PESTERLOG")
+  const logPage = snapshot.pages[1]
+  assert.ok(logPage)
+  assert.equal(
+    normalizePage(snapshot.provider, snapshot.adventureId, logPage).translation.content,
+    "|PESTERLOG|AA : Message factice.",
+  )
   assert.deepEqual(snapshot.pages[2]?.classifications, [
     "TEXT_TRANSLATABLE",
     "FLASH_TRANSLATION_REQUIRED",
@@ -35,6 +42,25 @@ test("refuse un identifiant d'aventure inattendu", async () => {
     () => new MspfaSnapshotSource(fixture, "45546").load(),
     InputValidationError,
   )
+})
+
+test("classifie séparément images, Flash et interactions", () => {
+  const snapshot = parseMspfaSnapshot({
+    i: 99998,
+    n: "Classification artificielle",
+    p: [{
+      c: "Médias artificiels",
+      b: "[img]https://example.test/factice.png[/img] [flash=factice.swf] [iframe=https://example.test]",
+      n: [],
+    }],
+  })
+
+  assert.deepEqual(snapshot.pages[0]?.classifications, [
+    "TEXT_TRANSLATABLE",
+    "IMAGE_TRANSLATION_REQUIRED",
+    "FLASH_TRANSLATION_REQUIRED",
+    "INTERACTIVE_TRANSLATION_REQUIRED",
+  ])
 })
 
 test("produit un snapshot relisible par la source locale", async () => {

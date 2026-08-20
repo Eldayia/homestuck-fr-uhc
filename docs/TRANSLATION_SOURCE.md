@@ -115,5 +115,5 @@ Le snapshot est une donnée intermédiaire locale. S'il contient la traduction, 
 
 - Le snapshot est complet ; MSPFA ne fournit pas de flux différentiel documenté.
 - La détection des logs est limitée aux marqueurs explicites Pesterlog, Dialoglog et Spritelog.
-- Le parser de contenu réel sera étendu en phase 6 ; l'import ne garantit pas encore qu'une page puisse être générée pour UHC.
+- La liste blanche et les logs explicites sont couverts par des fixtures artificielles ; l'inventaire du corpus réel reste nécessaire avant d'affirmer une compatibilité complète.
 - Les pages spéciales sont classées mais ne sont pas encore converties.

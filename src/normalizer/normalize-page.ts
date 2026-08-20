@@ -1,6 +1,7 @@
 import { sha256, stableStringify } from "../domain/hash.js"
 import type { CanonicalTranslationPage, SourcePage } from "../domain/types.js"
 import { parseSafeBbcode } from "../parser/safe-bbcode.js"
+import { normalizeLogBody } from "./log-content.js"
 
 export function normalizePage(
   provider: string,
@@ -10,10 +11,11 @@ export function normalizePage(
   const translation: CanonicalTranslationPage["translation"] = {}
 
   if (page.title !== undefined) {
-    translation.title = parseSafeBbcode(page.title).trim()
+    translation.title = parseSafeBbcode(page.title)
   }
   if (page.body !== undefined) {
-    const body = parseSafeBbcode(page.body).trim()
+    const sourceBody = page.logLabel === undefined ? page.body : normalizeLogBody(page.body, page.logLabel)
+    const body = parseSafeBbcode(sourceBody)
     translation.content = page.logLabel === undefined ? body : `|${page.logLabel}|${body}`
   }
 

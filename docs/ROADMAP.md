@@ -24,7 +24,7 @@ Cette feuille de route transforme le plan général en étapes vérifiables. Les
 | 3 | Adaptateur MSPFA et import local | ✅ | M2 — MVP juridiquement sûr |
 | 4 | Snapshots et mises à jour incrémentales | ✅ | M2 — MVP juridiquement sûr |
 | 5 | Mapping MSPFA ↔ Homestuck ↔ UHC | 🟡 | M3 — alpha locale |
-| 6 | Parser et normalisation du contenu réel | ⬜ | M3 — alpha locale |
+| 6 | Parser et normalisation du contenu réel | 🟡 | M3 — alpha locale |
 | 7 | Intégration et compatibilité UHC | ⬜ | M3 — alpha locale |
 | 8 | Workflow CLI complet | ⬜ | M3 — alpha locale |
 | 9 | État, rapports et reproductibilité | ⬜ | M4 — bêta |
@@ -217,21 +217,21 @@ Un mod prêt à installer contenant la traduction ne pourra être publié qu'apr
 
 **Critère de sortie :** chaque page générée possède une correspondance vérifiée, explicable et persistante.
 
-## Phase 6 — Parser et normalisation du contenu réel ⬜
+## Phase 6 — Parser et normalisation du contenu réel 🟡
 
 - [ ] Inventorier le BBCode réellement utilisé sans publier le corpus.
 - [ ] Étendre la liste blanche uniquement aux formes nécessaires.
-- [ ] Supporter narration et commandes.
-- [ ] Supporter Pesterlogs, Dialoglogs et Spritelogs.
-- [ ] Préserver quirks, capitalisation, ponctuation, couleurs et symboles.
-- [ ] Distinguer texte absent et chaîne volontairement vide.
-- [ ] Gérer plusieurs blocs de texte sans perte.
-- [ ] Normaliser uniquement les différences techniques MSPFA/UHC.
-- [ ] Produire un HTML déterministe.
-- [ ] Refuser scripts, événements, iframes et protocoles dangereux.
-- [ ] Classifier images, Flash et interactions nécessitant un traitement spécial.
-- [ ] Tester les structures avec des fixtures artificielles minimales.
-- [ ] Vérifier les hashes après changements purement cosmétiques.
+- [x] Supporter narration et commandes avec des fixtures artificielles.
+- [x] Supporter Pesterlogs, Dialoglogs et Spritelogs explicites.
+- [x] Préserver quirks, capitalisation, ponctuation, couleurs et symboles.
+- [x] Distinguer texte absent et chaîne volontairement vide.
+- [x] Gérer plusieurs blocs de texte sans perte.
+- [x] Normaliser uniquement les différences techniques MSPFA/UHC documentées.
+- [x] Produire un HTML déterministe.
+- [x] Refuser scripts, événements, iframes et protocoles dangereux.
+- [x] Classifier images, Flash et interactions nécessitant un traitement spécial.
+- [x] Tester les structures avec des fixtures artificielles minimales.
+- [x] Vérifier les hashes après changements purement cosmétiques.
 
 **Critère de sortie :** les pages textuelles classiques et les logs sont fidèlement convertis, tandis que tout contenu non sûr ou non supporté est signalé.
 

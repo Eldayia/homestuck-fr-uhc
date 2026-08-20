@@ -46,6 +46,8 @@ generated/<nom>/
 
 Le parser accepte un sous-ensemble volontairement restreint du BBCode : emphase, soulignement, barré, couleur hexadécimale, spoiler, saut de ligne et URL HTTP(S). Le HTML source est échappé. Les balises actives, protocoles de script et BBCode inconnu sont bloqués.
 
+Le normaliseur convertit les wrappers explicites Pesterlog, Dialoglog et Spritelog de MSPFA vers les préfixes UHC. Il préserve les chaînes vides, espaces, quirks et blocs multiples ; seules les fins de ligne et les différences techniques documentées sont normalisées. Les règles détaillées figurent dans [`CONTENT_NORMALIZATION.md`](./CONTENT_NORMALIZATION.md).
+
 Les fixtures du pipeline couvrent dix formes artificielles. Une fixture supplémentaire reproduit la structure compacte MSPFA sans reprendre de contenu réel. L'adaptateur MSPFA local convertit cette structure vers un snapshot versionné, élimine le JavaScript et le CSS personnalisés, puis écrit uniquement dans un emplacement choisi par l'utilisateur — `.cache/` par défaut.
 
 L'accès réseau est isolé dans `adapters/mspfa/network-source.ts` et ne constitue pas une dépendance du cœur. La normalisation exhaustive du BBCode réel et la récupération réseau différentielle restent hors de la portée actuelle.
