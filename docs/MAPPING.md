@@ -46,6 +46,21 @@ Le fichier de propositions ne contient pas le texte traduit. Pour chaque page, i
 
 Aucun de ces calculs ne crée automatiquement une entrée `verified`.
 
+## Préparer un échantillon de revue
+
+```bash
+npm run hsfr -- mapping-review \
+  --source .cache/imports/homestuck-fr.json \
+  --mapping data/mapping/pages.json \
+  --reference .cache/uhc/reference.json \
+  --sample-size 20 \
+  --out .cache/mapping/review.md
+```
+
+La sélection est déterministe pour les mêmes entrées. Elle réserve d'abord des pages aux différents statuts et classifications disponibles, puis répartit les places restantes sur toute l'étendue du snapshot afin d'éviter un échantillon concentré au début de l'aventure.
+
+Le rapport contient les numéros source, hashes, classifications, statuts, candidats UHC et types de signaux. Il exclut les titres et corps de pages. Il reste local sous `.cache/` et propose des cases distinctes pour la revue de la source, la revue UHC et la décision humaine.
+
 ## Signaux actuels
 
 ### Identifiants d'assets

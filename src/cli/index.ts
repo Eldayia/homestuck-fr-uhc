@@ -8,12 +8,13 @@ import { MspfaSnapshotSource } from "../../adapters/mspfa/snapshot-source.js"
 import { HsfrError, InputValidationError } from "../domain/errors.js"
 import { writeUhcMod } from "../generator/uhc-mod.js"
 import { readDistributionPolicy, readMappings, readOverrides } from "../io/config.js"
-import { writeStableJsonFile } from "../io/write-json.js"
+import { writeStableJsonFile, writeTextFileAtomically } from "../io/write-json.js"
 import { runPipeline } from "../pipeline/build-pipeline.js"
 import { assertContentDistributionAllowed } from "../policy/distribution.js"
 import { runUpdate } from "../update/update-workflow.js"
 import { proposeMappings, validateMappingSet } from "../mapper/propose-mappings.js"
 import { buildUhcReference, readUhcReference } from "../mapper/uhc-reference.js"
+import { createMappingReviewReport } from "../mapper/review-report.js"
 
 interface CliOptions {
   source: string
@@ -29,6 +30,7 @@ interface CliOptions {
   state: string
   report: string
   reference?: string
+  sampleSize: number
   dryRun: boolean
   adventure?: string
 }
@@ -110,6 +112,22 @@ async function main(argv: string[]): Promise<void> {
     return
   }
 
+  if (command === "mapping-review") {
+    if (!optionArguments.includes("--source")) {
+      throw new InputValidationError("La commande mapping-review exige --source <snapshot.json>")
+    }
+    const [snapshot, mappings, reference] = await Promise.all([
+      new LocalJsonSource(options.source).load(),
+      readMappings(options.mapping),
+      options.reference === undefined ? Promise.resolve(undefined) : readUhcReference(options.reference),
+    ])
+    const proposals = proposeMappings(snapshot, mappings, reference)
+    const review = createMappingReviewReport(snapshot, proposals, options.sampleSize)
+    await writeTextFileAtomically(options.out, review.markdown)
+    console.log(`[OK] Rapport de revue sans texte: ${review.entries.length} pages écrites dans ${options.out}`)
+    return
+  }
+
   if (command === "mapping-status") {
     const mappings = await readMappings(options.mapping)
     validateMappingSet(mappings)
@@ -163,6 +181,7 @@ function parseOptions(command: string, arguments_: string[]): CliOptions {
     "state",
     "report",
     "reference",
+    "sample-size",
     "dry-run",
   ])
   for (let index = 0; index < arguments_.length; index += 2) {
@@ -191,7 +210,11 @@ function parseOptions(command: string, arguments_: string[]): CliOptions {
         ? ".cache/imports/mspfa-snapshot.json"
         : command === "uhc-index"
           ? ".cache/uhc/reference.json"
-          : "generated/homestuck-fr"
+          : command === "mapping-propose"
+            ? ".cache/mapping/proposals.json"
+            : command === "mapping-review"
+              ? ".cache/mapping/review.md"
+              : "generated/homestuck-fr"
     )),
     policy: resolve(values.get("policy") ?? "data/metadata/distribution-policy.json"),
     cache: resolve(values.get("cache") ?? ".cache/mspfa"),
@@ -201,6 +224,7 @@ function parseOptions(command: string, arguments_: string[]): CliOptions {
     minimumIntervalMs: parseIntegerOption(values.get("minimum-interval-ms") ?? "60000", "minimum-interval-ms", 0),
     state: resolve(values.get("state") ?? "data/metadata/source-state.json"),
     report: resolve(values.get("report") ?? `reports/update-${new Date().toISOString().slice(0, 10)}.md`),
+    sampleSize: parseIntegerOption(values.get("sample-size") ?? "20", "sample-size", 1),
     dryRun: parseBooleanOption(values.get("dry-run") ?? "false", "dry-run"),
   }
   const adventure = values.get("adventure")
@@ -217,6 +241,7 @@ function printHelp(): void {
   hsfr update   --source snapshot.json [--state fichier] [--report fichier] [--dry-run true|false]
   hsfr uhc-index --source mspa.json [--out reference.json]
   hsfr mapping-propose --source snapshot.json [--mapping pages.json] [--reference reference.json] [--out propositions.json]
+  hsfr mapping-review  --source snapshot.json [--mapping pages.json] [--reference reference.json] [--sample-size 20] [--out revue.md]
   hsfr mapping-status  [--mapping pages.json]
   hsfr validate [--source fichier] [--mapping fichier] [--overrides fichier]
   hsfr build    [--source fichier] [--mapping fichier] [--overrides fichier] [--out dossier]

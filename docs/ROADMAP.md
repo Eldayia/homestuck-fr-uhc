@@ -210,6 +210,7 @@ Un mod prêt à installer contenant la traduction ne pourra être publié qu'apr
 - [x] Ajouter `hsfr mapping-status`.
 - [x] Ajouter un fichier de propositions servant de file de revue.
 - [x] Afficher les candidats sans inclure le texte protégé dans les rapports publics.
+- [x] Préparer un échantillon local représentatif et une checklist de revue sans texte.
 - [x] Exiger une validation humaine pour les cas ambigus.
 - [x] Bloquer la génération de toute page sans mapping vérifié.
 - [ ] Vérifier manuellement un échantillon d'environ vingt pages de différentes époques.

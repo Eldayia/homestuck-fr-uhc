@@ -55,3 +55,5 @@ Le module `src/update/` compare deux états par hash. Il ne dépend pas du mappi
 Le module `src/mapper/propose-mappings.ts` combine des preuves indépendantes sans modifier le mapping persistant. Il peut signaler un candidat ou un conflit, mais seule une entrée explicitement `verified` est acceptée par le générateur.
 
 Le module `src/mapper/uhc-reference.ts` réduit le `mspa.json` UHC possédé localement par l'utilisateur à un index sans texte : identifiants, hashes, compteurs et indicateurs structurels. Cet index renforce les candidats et permet de détecter un mapping vérifié devenu obsolète lorsque son `sourceHash` ne correspond plus.
+
+Le module `src/mapper/review-report.ts` sélectionne un échantillon déterministe couvrant statuts, types de pages et différentes positions du snapshot. Son rapport Markdown ne reprend aucun titre ou corps de page et sert uniquement de checklist à la vérification humaine locale.

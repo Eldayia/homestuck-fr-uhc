@@ -94,6 +94,16 @@ npm run hsfr -- mapping-propose \
 
 L'index UHC ne conserve aucun titre ni contenu en clair et reste hors Git.
 
+Préparer un rapport local de vingt pages représentatives à vérifier humainement :
+
+```bash
+npm run hsfr -- mapping-review \
+  --source .cache/imports/homestuck-fr.json \
+  --mapping data/mapping/pages.json \
+  --reference .cache/uhc/reference.json \
+  --sample-size 20
+```
+
 Voir [la documentation du mapping](./docs/MAPPING.md).
 
 ## Licence
