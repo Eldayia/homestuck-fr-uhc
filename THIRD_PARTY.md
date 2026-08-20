@@ -4,6 +4,7 @@ Ce registre distingue les logiciels, la traduction et les œuvres. Une licence l
 
 | Projet ou composant | Usage dans ce dépôt | Licence ou permission observée | Redistribution par ce dépôt |
 |---|---|---|---|
+| Code original Homestuck FR UHC | Outils de génération locale | GPL-3.0-or-later | Distribué sous [`LICENSE`](./LICENSE), sans étendre cette licence au contenu |
 | The Unofficial Homestuck Collection | Compatibilité avec l'API des mods et format des pages | GPL-3.0-or-later avec exigence de préservation des attributions annoncée par l'amont | Aucun code ou Asset Pack UHC inclus actuellement |
 | Homestuck | Cible de correspondance des pages | Œuvre propriétaire ; aucune permission supposée | Aucun texte original ni asset inclus |
 | Homestuck en Français | Source potentielle générée localement | Aucune licence ou autorisation de redistribution trouvée | Aucun texte ou asset inclus |

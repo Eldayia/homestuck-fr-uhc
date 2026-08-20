@@ -1,10 +1,10 @@
 # Décision de licence du code
 
-> Statut : décision du propriétaire requise
+> Statut : décidé le 20 août 2026
 
 Le code écrit jusqu'ici est original et aucun extrait de code UHC ou d'un mod tiers n'a été identifié dans le dépôt. Sur la base de cet état, la licence UHC ne semble pas imposée au code actuel par copie ou dérivation. Cette constatation devra être réévaluée si du code tiers est intégré.
 
-Sans fichier de licence, les droits par défaut restent réservés. Le projet n'est donc pas encore réellement open source, même si son dépôt est public.
+Le propriétaire du dépôt a choisi `GPL-3.0-or-later`. Le texte officiel figure dans [`LICENSE`](../LICENSE) et `package.json` utilise le même identifiant SPDX.
 
 ## Options raisonnables
 
@@ -35,21 +35,21 @@ Sans fichier de licence, les droits par défaut restent réservés. Le projet n'
 
 Cette décision porte uniquement sur le code original du dépôt. Elle ne peut pas placer la traduction française, Homestuck ou les assets sous la même licence.
 
-## Décision à renseigner
+## Décision enregistrée
 
 ```text
-Licence choisie :
-Décidé par :
-Date :
-Motif :
+Licence choisie : GPL-3.0-or-later
+Décidé par : propriétaire du dépôt
+Date : 2026-08-20
+Motif : préserver un outil communautaire libre et rester cohérent avec l'écosystème UHC
 ```
 
-Après décision :
+Actions appliquées :
 
-1. ajouter le texte officiel dans `LICENSE` ;
-2. mettre à jour `package.json#license` ;
-3. mettre à jour `README.md`, `NOTICE` et `THIRD_PARTY.md` ;
-4. préciser que la licence couvre le code original seulement ;
-5. exécuter les tests et la checklist de release.
+1. texte officiel ajouté dans `LICENSE` ;
+2. métadonnées npm mises à jour ;
+3. `README.md`, `NOTICE` et `THIRD_PARTY.md` mis à jour ;
+4. périmètre limité explicitement au code original ;
+5. tests et checklist de release requis avant publication.
 
 Référence générale : <https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/licensing-a-repository>.

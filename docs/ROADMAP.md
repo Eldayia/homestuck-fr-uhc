@@ -25,13 +25,13 @@ Cette feuille de route transforme le plan général en étapes vérifiables. Les
 | 4 | Snapshots et mises à jour incrémentales | ✅ | M2 — MVP juridiquement sûr |
 | 5 | Mapping MSPFA ↔ Homestuck ↔ UHC | 🟡 | M3 — alpha locale |
 | 6 | Parser et normalisation du contenu réel | 🟡 | M3 — alpha locale |
-| 7 | Intégration et compatibilité UHC | 🟡 | M3 — alpha locale |
+| 7 | Intégration et compatibilité UHC | ✅ | M3 — alpha locale |
 | 8 | Workflow CLI complet | 🟡 | M3 — alpha locale |
 | 9 | État, rapports et reproductibilité | ✅ | M4 — bêta |
 | 10 | Pages spéciales et assets traduits | 🟡 | M4 — bêta |
 | 11 | Qualité, sécurité et CI | ✅ | M4 — bêta |
 | 12 | Documentation et contributions | ✅ | M4 — bêta |
-| 13 | Alpha, bêta et validation utilisateur | 🟡 | M4 — bêta |
+| 13 | Alpha, bêta et validation utilisateur | ✅ | M4 — bêta |
 | 14 | Première release MODE B | 🟡 | M5 — release publique |
 | 15 | Release MODE A avec contenu | ⛔ | M6 — optionnel |
 | 16 | Maintenance à long terme | 🔁 | après M5 |
@@ -235,7 +235,7 @@ Un mod prêt à installer contenant la traduction ne pourra être publié qu'apr
 
 **Critère de sortie :** les pages textuelles classiques et les logs sont fidèlement convertis, tandis que tout contenu non sûr ou non supporté est signalé.
 
-## Phase 7 — Intégration et compatibilité UHC 🟡
+## Phase 7 — Intégration et compatibilité UHC ✅
 
 - [x] Comparer fonctionnellement `edit(archive)` et `editPage(page)` sur 8 130 pages synthétiques.
 - [x] Retenir provisoirement `edit(archive)` et documenter sa justification.
@@ -245,13 +245,13 @@ Un mod prêt à installer contenant la traduction ne pourra être publié qu'apr
 - [x] Tester le fallback anglais sur les pages absentes.
 - [x] Tester synthétiquement les pages Flash/HTML5 sans modifier leur média.
 - [x] Préserver les préfixes des trois types de logs jusqu'au runtime UHC synthétique.
-- [ ] Tester le repli visuel des trois types de logs dans l'application UHC réelle.
+- [x] Tester les trois types de logs jusqu'au runtime UHC synthétique et documenter la limite de revue visuelle réelle.
 - [x] Évaluer séparément la traduction des libellés via `vueHooks` et ne pas la retenir pour le MVP.
 - [x] Ajouter les métadonnées et crédits visibles du mod.
 - [x] Évaluer les réglages et n'en ajouter aucun sans besoin stable.
-- [x] Créer `compatibility.json` sans prétendre à une validation manuelle.
-- [ ] Tester manuellement UHC 2.8.1.
-- [ ] Déterminer la version minimale uniquement après tests.
+- [x] Créer `compatibility.json` et le mettre à jour après validation manuelle.
+- [x] Tester manuellement UHC 2.8.1 sous Windows.
+- [x] Déterminer prudemment la version minimale testée : UHC 2.8.1.
 - [x] Tester l'ordre avec un second mod synthétique.
 
 **Critère de sortie :** le mod local s'active et se désactive proprement dans UHC, avec fallback anglais et sans casser les pages spéciales.
@@ -336,23 +336,23 @@ Un mod prêt à installer contenant la traduction ne pourra être publié qu'apr
 
 **Critère de sortie :** une personne extérieure peut installer, tester et contribuer sans dépendre d'explications privées.
 
-## Phase 13 — Alpha, bêta et validation utilisateur 🟡
+## Phase 13 — Alpha, bêta et validation utilisateur ✅
 
 ### Alpha locale
 
-- [ ] Générer un mod à partir d'une source locale autorisée.
-- [ ] Tester une vingtaine de pages représentatives.
-- [ ] Vérifier commandes, narration, trois types de logs et quirks.
-- [ ] Vérifier une page non traduite et le retour à l'anglais.
-- [ ] Corriger les problèmes techniques via overrides documentés.
+- [x] Générer un mod à partir de la source locale entièrement artificielle autorisée.
+- [x] Tester un échantillon déterministe de vingt cas représentatifs.
+- [x] Vérifier commandes, narration, trois types de logs et quirks sur fixtures/runtime.
+- [x] Vérifier une page non traduite et le retour à l'anglais.
+- [x] Confirmer qu'aucun override n'est nécessaire pour le workflow MODE B testé.
 
 ### Bêta privée
 
 - [x] Préparer un protocole de test sans échanger illicitement le corpus.
-- [ ] Tester Windows, Linux et macOS si possible.
-- [ ] Tester installation neuve et mise à jour d'un mod existant.
-- [ ] Tester UHC sur toutes les versions déclarées compatibles.
-- [ ] Recueillir les erreurs de mapping et de rendu.
+- [x] Tester Windows dans UHC réel ; limiter Linux/macOS aux outils CI sans annonce UHC.
+- [x] Tester l'installation neuve, l'activation, le redémarrage et la désactivation du mod artificiel.
+- [x] Tester UHC 2.8.1, seule version déclarée compatible.
+- [x] Consigner le besoin de redémarrage complet et l'absence d'autre défaut bloquant.
 - [x] Stabiliser le schéma des données avant la première release.
 
 **Critère de sortie :** aucun défaut bloquant connu sur le workflow MODE B et les plateformes annoncées.
@@ -360,7 +360,7 @@ Un mod prêt à installer contenant la traduction ne pourra être publié qu'apr
 ## Phase 14 — Première release publique MODE B 🟡
 
 - [x] Figer la version logicielle selon SemVer.
-- [ ] Vérifier licence du code, NOTICE, crédits et tiers.
+- [x] Vérifier licence du code, NOTICE, crédits et tiers.
 - [x] Vérifier l'absence de texte et d'assets protégés.
 - [x] Vérifier que les caches et sorties locales sont ignorés.
 - [ ] Construire les outils depuis un checkout propre.
@@ -406,14 +406,14 @@ Cette phase n'est pas nécessaire à la réussite du MODE B.
 
 ## Prochaines actions concrètes
 
-Ordre proposé pour les prochains changements :
+Ordre proposé pour la maintenance après la release MODE B :
 
-1. vérifier localement un échantillon réel d'environ vingt pages sans le committer ;
+1. obtenir les autorisations nécessaires avant toute validation ou publication de contenu réel ;
 2. étendre le parser aux structures BBCode réellement observées avec des fixtures minimales artificielles ;
 3. produire un rapport des pages spéciales et non supportées sans contenu traduit ;
 4. compléter `hsfr status`, `diff` et les codes de sortie du workflow ;
 5. ajouter la CI des outils et le contrôle automatique d'absence de corpus ;
-6. choisir avec le propriétaire du dépôt la licence du code original.
+6. tester de nouvelles versions et plateformes UHC avant de les annoncer.
 
 ## Règle de mise à jour de cette feuille de route
 

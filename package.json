@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "description": "Outils de génération locale d'un mod français pour The Unofficial Homestuck Collection",
-  "license": "UNLICENSED",
+  "license": "GPL-3.0-or-later",
   "type": "module",
   "engines": {
     "node": ">=22.0.0"

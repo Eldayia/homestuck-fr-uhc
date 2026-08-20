@@ -9,7 +9,7 @@ Une comparaison fonctionnelle artificielle couvre 8 130 pages avec deux stratég
 - `edit(archive)` parcourt une fois les patches disponibles ;
 - une simulation `editPage(page)` applique le même patch lors de l'accès à chaque page.
 
-Les résultats sont identiques sur ce corpus synthétique. `edit` reste retenu parce qu'il utilise le contrat le plus simple, charge le JSON une seule fois et ne dépend pas du hook paresseux plus récent. Ce choix devra être confirmé dans l'application UHC réelle avant de déclarer une version minimale.
+Les résultats sont identiques sur ce corpus synthétique. `edit` reste retenu parce qu'il utilise le contrat le plus simple, charge le JSON une seule fois et ne dépend pas du hook paresseux plus récent. Ce choix a ensuite été confirmé dans UHC 2.8.1 sous Windows.
 
 ## Fallback anglais
 
@@ -41,19 +41,19 @@ Les pages Flash et HTML5 peuvent recevoir leur texte extérieur, mais leurs cham
 - Aucun réglage de mod n'est ajouté tant qu'un besoin stable n'est pas démontré.
 - `modVersion` est un entier propre au mod et ne dépend pas de la version SemVer de l'outil.
 - `CREDITS.txt` accompagne le mod et les métadonnées visibles renvoient vers ce fichier.
-- `minAppVersion` n'est pas déclaré tant que plusieurs versions réelles n'ont pas été testées.
+- `minAppVersion` vaut `2.8.1`, seule version réelle certifiée pour cette release.
 
 ## `compatibility.json`
 
 Chaque build écrit un fichier versionné conforme à [`schemas/compatibility.schema.json`](../schemas/compatibility.schema.json). Dans l'état actuel :
 
 - `targetAppVersion` vaut `2.8.1` ;
-- `testedAppVersions` reste vide ;
-- `minimumAppVersion` reste `null` ;
-- `manualValidationRequired` reste `true`.
+- `testedAppVersions` contient `2.8.1` ;
+- `minimumAppVersion` vaut `2.8.1` ;
+- `manualValidationRequired` vaut `false` pour ce couple Windows/UHC.
 
-Ces valeurs empêchent de présenter les tests synthétiques comme une certification de compatibilité avec l'application réelle.
+Ces valeurs n'annoncent aucune compatibilité avec une version UHC antérieure ni avec Linux ou macOS.
 
 ## Validation encore requise
 
-Il reste à installer le mod local dans UHC 2.8.1, vérifier activation/désactivation, affichage et repli des trois types de logs, pages Flash/HTML5, puis répéter les essais sur les versions supplémentaires que le projet souhaite annoncer.
+La validation réelle Windows est consignée dans [`VALIDATION_WINDOWS_UHC_2.8.1.md`](VALIDATION_WINDOWS_UHC_2.8.1.md). Les trois types de logs, les pages spéciales et le fallback sont couverts par le runtime synthétique ; leur revue visuelle exhaustive dans UHC reste un axe de maintenance, pas une promesse de la release MODE B.

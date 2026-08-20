@@ -18,7 +18,7 @@ Cette archive ne contient ni traduction française, ni snapshot, ni mapping rée
 
 ## Limites
 
-- aucune compatibilité UHC réelle n'est encore certifiée publiquement ;
+- l'installation et l'exécution sont validées uniquement sous Windows avec UHC 2.8.1 ; Linux et macOS ne sont pas certifiés dans UHC ;
 - les pages sans patch restent en anglais ;
 - les médias intégrant du texte ne sont pas transformés ;
-- la publication reste bloquée jusqu'au choix de licence et à une validation UHC approuvée.
+- le code des outils est publié sous GPL-3.0-or-later, sans placer la traduction ou les assets sous cette licence.

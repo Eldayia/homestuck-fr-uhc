@@ -23,10 +23,10 @@ Dernière mise à jour : 20 août 2026.
 
 | UHC | Plateforme | Installation | Résultat |
 |---|---|---|---|
-| 2.8.1 | Windows | neuve | non exécutée |
-| 2.8.1 | Linux | neuve | non exécutée |
-| 2.8.1 | macOS | neuve | non exécutée |
+| 2.8.1 | Windows | neuve, mod artificiel | réussi le 20 août 2026 |
+| 2.8.1 | Linux | — | non annoncée |
+| 2.8.1 | macOS | — | non annoncée |
 
-Une tentative locale Windows a confirmé que l'application UHC et son validateur démarrent. Le contrôle de l'Asset Pack a toutefois signalé une racine incorrecte ou des fichiers attendus absents ; aucun mod n'a donc été chargé et aucun résultat `passed` n'est enregistré.
+Le mod artificiel a été détecté, activé, chargé après redémarrage complet, affiché sur la page Homestuck 1, puis désactivé et supprimé. Le titre et le corps artificiels étaient visibles tandis que le média et la navigation UHC restaient intacts. Voir [`VALIDATION_WINDOWS_UHC_2.8.1.md`](VALIDATION_WINDOWS_UHC_2.8.1.md).
 
-Aucune version minimale ou plateforme compatible n'est annoncée. La phase 13 reste bloquée jusqu'à la validation complète de l'Asset Pack, la revue humaine de mappings et un enregistrement `passed` dans l'application réelle.
+La compatibilité annoncée est volontairement limitée à Windows et UHC 2.8.1. Les tests Linux/macOS de la CI certifient les outils Node.js, pas l'intégration dans l'application UHC.

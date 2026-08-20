@@ -8,8 +8,8 @@ Ce projet communautaire non officiel n'est affilié ni à Homestuck, ni à MSPFA
 
 | Élément | État |
 |---|---|
-| Outils MODE B | Bêta technique `0.1.0` |
-| UHC ciblé | `2.8.1`, validation réelle en cours |
+| Outils MODE B | Release publique `0.1.0` |
+| UHC ciblé | `2.8.1`, validé sous Windows |
 | Traduction incluse | Non |
 | Assets Homestuck/UHC inclus | Non |
 | Mapping réel publié | Aucun pour le moment |
@@ -321,7 +321,7 @@ Le dernier mod appliqué gagne lorsque deux mods modifient le même titre ou con
 
 Cette structure suit le [guide officiel de modding UHC 2.8.1](https://github.com/GiovanH/unofficial-homestuck-collection/blob/91911836a53743e9cf075e5a91c96ebcaf22e039/MODDING.md#installing-mods).
 
-> La compatibilité réelle avec UHC 2.8.1 doit encore être consignée par un test humain approuvé. Consulter [`docs/VALIDATION_STATUS.md`](./docs/VALIDATION_STATUS.md) avant d'interpréter la version ciblée comme une certification.
+> Ce parcours a été validé dans UHC 2.8.1 sous Windows avec un mod composé exclusivement de fixtures artificielles. Linux et macOS ne sont pas certifiés pour l'exécution dans UHC. Consulter le [rapport de validation détaillé](./docs/VALIDATION_WINDOWS_UHC_2.8.1.md) et [`docs/VALIDATION_STATUS.md`](./docs/VALIDATION_STATUS.md).
 
 ---
 
@@ -401,4 +401,4 @@ Lire [`CONTRIBUTING.md`](./CONTRIBUTING.md) et le [`CODE_OF_CONDUCT.md`](./CODE_
 
 ## Licence
 
-Aucune licence de code n'a encore été approuvée : `package.json` reste `UNLICENSED`. La publication d'une release est techniquement bloquée jusqu'à la décision du propriétaire. Les options sont comparées dans [`docs/LICENSING_DECISION.md`](./docs/LICENSING_DECISION.md).
+Le code original de ce dépôt est distribué sous **GNU GPL version 3 ou ultérieure** (`GPL-3.0-or-later`) ; consulter [`LICENSE`](./LICENSE). Cette licence ne couvre ni la traduction française, ni Homestuck, ni les assets UHC. La décision et son périmètre sont consignés dans [`docs/LICENSING_DECISION.md`](./docs/LICENSING_DECISION.md).

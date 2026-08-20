@@ -11,9 +11,9 @@ export const UHC_COMPATIBILITY = {
   schemaVersion: 1,
   integrationHook: "edit",
   targetAppVersion: "2.8.1",
-  minimumAppVersion: null,
-  testedAppVersions: [] as string[],
-  manualValidationRequired: true,
+  minimumAppVersion: "2.8.1",
+  testedAppVersions: ["2.8.1"] as string[],
+  manualValidationRequired: false,
   usesVueHooks: false,
   hasSettings: false,
   preservesUnpatchedFields: true,
@@ -43,6 +43,7 @@ const MOD_TEMPLATE = `module.exports = {
   description: "Mod communautaire non officiel généré localement. Traduction et outils crédités dans CREDITS.txt.",
   author: "Équipe de traduction française et contributeurs Homestuck FR UHC",
   modVersion: ${MOD_VERSION},
+  minAppVersion: "2.8.1",
   edit: true,
 
   computed(api) {

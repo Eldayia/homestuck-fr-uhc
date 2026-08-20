@@ -26,9 +26,9 @@ Aucune licence ni autorisation publique explicite couvrant la redistribution de 
 |---|---|
 | Source | Ce dépôt |
 | Auteur juridique | À renseigner par le propriétaire du dépôt |
-| Licence | Aucune sélectionnée (`UNLICENSED`) |
+| Licence | GNU GPL version 3 ou ultérieure (`GPL-3.0-or-later`) |
 | Code UHC copié | Aucun identifié à ce stade |
-| Conséquence | Les droits par défaut restent réservés jusqu'au choix d'une licence |
+| Conséquence | Le code original peut être redistribué selon `LICENSE`; aucun droit n'est accordé sur la traduction ou les assets |
 
 GitHub rappelle qu'un dépôt sans licence n'accorde pas normalement le droit de reproduire, distribuer ou créer des dérivés, au-delà des fonctions de consultation et de fork prévues par GitHub : <https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/licensing-a-repository>.
 
@@ -143,7 +143,7 @@ Le code teste ces conditions, mais ne peut pas déterminer seul si une personne 
 |---|---|---|
 | 2026-08-20 | MODE B uniquement | Aucune licence ou autorisation explicite trouvée pour la traduction |
 | 2026-08-20 | Assets exclus | Droits multiples possibles et aucun périmètre d'autorisation établi |
-| 2026-08-20 | Code du dépôt `UNLICENSED` | Choix de licence réservé au propriétaire du dépôt |
+| 2026-08-20 | Code du dépôt sous `GPL-3.0-or-later` | Choix explicite du propriétaire ; contenu et assets exclus du périmètre |
 
 ## Sources consultées
 
