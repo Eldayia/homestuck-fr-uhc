@@ -20,6 +20,7 @@ Consulter :
 - [la recherche initiale](./docs/RESEARCH.md) pour les décisions techniques et juridiques ;
 - [l'architecture](./docs/ARCHITECTURE.md) pour les invariants du pipeline actuel ;
 - [la normalisation du contenu](./docs/CONTENT_NORMALIZATION.md) pour la liste blanche, les logs et les règles de sécurité ;
+- [le workflow CLI](./docs/CLI.md) et [la compatibilité UHC](./docs/UHC_COMPATIBILITY.md) pour la génération locale ;
 - [la recherche juridique](./docs/LEGAL_RESEARCH.md) et [la checklist de release](./docs/RELEASE_CHECKLIST.md) pour les règles de distribution.
 
 ## Développement

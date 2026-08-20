@@ -25,8 +25,8 @@ Cette feuille de route transforme le plan général en étapes vérifiables. Les
 | 4 | Snapshots et mises à jour incrémentales | ✅ | M2 — MVP juridiquement sûr |
 | 5 | Mapping MSPFA ↔ Homestuck ↔ UHC | 🟡 | M3 — alpha locale |
 | 6 | Parser et normalisation du contenu réel | 🟡 | M3 — alpha locale |
-| 7 | Intégration et compatibilité UHC | ⬜ | M3 — alpha locale |
-| 8 | Workflow CLI complet | ⬜ | M3 — alpha locale |
+| 7 | Intégration et compatibilité UHC | 🟡 | M3 — alpha locale |
+| 8 | Workflow CLI complet | 🟡 | M3 — alpha locale |
 | 9 | État, rapports et reproductibilité | ⬜ | M4 — bêta |
 | 10 | Pages spéciales et assets traduits | ⬜ | M4 — bêta |
 | 11 | Qualité, sécurité et CI | ⬜ | M4 — bêta |
@@ -235,39 +235,40 @@ Un mod prêt à installer contenant la traduction ne pourra être publié qu'apr
 
 **Critère de sortie :** les pages textuelles classiques et les logs sont fidèlement convertis, tandis que tout contenu non sûr ou non supporté est signalé.
 
-## Phase 7 — Intégration et compatibilité UHC ⬜
+## Phase 7 — Intégration et compatibilité UHC 🟡
 
-- [ ] Comparer `edit(archive)` et `editPage(page)` sur un corpus important.
-- [ ] Choisir le hook principal selon les mesures et versions testées.
-- [ ] Charger les données avec l'API de fichiers du mod UHC.
-- [ ] Remplacer seulement les champs traduits présents.
-- [ ] Ne jamais remplacer l'objet page complet.
-- [ ] Tester le fallback anglais sur les pages absentes.
-- [ ] Tester pages Flash/HTML5 sans modifier leur média.
-- [ ] Tester les logs repliables.
-- [ ] Évaluer séparément la traduction des libellés via `vueHooks`.
-- [ ] Ajouter les métadonnées et crédits visibles du mod.
-- [ ] Ajouter des réglages minimaux seulement s'ils sont stables.
-- [ ] Créer `compatibility.json`.
+- [x] Comparer fonctionnellement `edit(archive)` et `editPage(page)` sur 8 130 pages synthétiques.
+- [x] Retenir provisoirement `edit(archive)` et documenter sa justification.
+- [x] Charger les données avec l'API de fichiers du mod UHC.
+- [x] Remplacer seulement les champs traduits présents.
+- [x] Ne jamais remplacer l'objet page complet.
+- [x] Tester le fallback anglais sur les pages absentes.
+- [x] Tester synthétiquement les pages Flash/HTML5 sans modifier leur média.
+- [x] Préserver les préfixes des trois types de logs jusqu'au runtime UHC synthétique.
+- [ ] Tester le repli visuel des trois types de logs dans l'application UHC réelle.
+- [x] Évaluer séparément la traduction des libellés via `vueHooks` et ne pas la retenir pour le MVP.
+- [x] Ajouter les métadonnées et crédits visibles du mod.
+- [x] Évaluer les réglages et n'en ajouter aucun sans besoin stable.
+- [x] Créer `compatibility.json` sans prétendre à une validation manuelle.
 - [ ] Tester manuellement UHC 2.8.1.
 - [ ] Déterminer la version minimale uniquement après tests.
-- [ ] Tester l'ordre avec un second mod synthétique.
+- [x] Tester l'ordre avec un second mod synthétique.
 
 **Critère de sortie :** le mod local s'active et se désactive proprement dans UHC, avec fallback anglais et sans casser les pages spéciales.
 
-## Phase 8 — Workflow CLI complet ⬜
+## Phase 8 — Workflow CLI complet 🟡
 
-- [ ] Stabiliser `hsfr import`.
-- [ ] Implémenter `hsfr update`.
-- [ ] Implémenter `hsfr status`.
-- [ ] Implémenter `hsfr diff`.
-- [ ] Compléter `hsfr validate`.
-- [ ] Compléter `hsfr build`.
+- [x] Stabiliser `hsfr import`.
+- [x] Implémenter `hsfr update`.
+- [x] Implémenter `hsfr status`.
+- [x] Implémenter `hsfr diff`.
+- [x] Compléter `hsfr validate`.
+- [x] Compléter `hsfr build` avec `compatibility.json`.
 - [ ] Implémenter `hsfr package` derrière le verrou juridique.
-- [ ] Ajouter `--dry-run` aux opérations qui écrivent.
-- [ ] Ajouter `--verbose` sans exposer le contenu dans les logs publics.
-- [ ] Retourner des codes de sortie stables.
-- [ ] Fournir une aide et des exemples pour chaque commande.
+- [x] Ajouter `--dry-run` aux opérations qui écrivent.
+- [x] Ajouter `--verbose` sans exposer le contenu dans les logs publics.
+- [x] Retourner des codes de sortie stables.
+- [x] Fournir une aide et des exemples pour chaque commande.
 
 **Critère de sortie :** un utilisateur peut suivre tout le workflow local sans modifier manuellement des fichiers générés.
 
@@ -277,7 +278,7 @@ Un mod prêt à installer contenant la traduction ne pourra être publié qu'apr
 - [ ] Générer `reports/special-pages.md`.
 - [ ] Afficher nouvelles, modifiées, manquantes et inchangées.
 - [ ] Signaler les overrides touchés par un changement amont.
-- [ ] Calculer couverture, pages mappées, validées et en revue.
+- [x] Calculer couverture, pages mappées, validées et en revue avec `hsfr status`.
 - [ ] Ne jamais coder en dur la progression MSPFA.
 - [ ] Créer `translation-lock.json`.
 - [ ] Ajouter `hsfr build --locked`.

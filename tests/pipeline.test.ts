@@ -54,6 +54,9 @@ test("génère deux sorties identiques et ne remplace jamais l'objet page UHC", 
     const mod = await readFile(join(first, "mod.js"), "utf8")
 
     assert.equal(firstJson, secondJson)
+    for (const filename of ["mod.js", "compatibility.json", "CREDITS.txt"]) {
+      assert.equal(await readFile(join(first, filename), "utf8"), await readFile(join(second, filename), "utf8"))
+    }
     assert.match(mod, /page\.title = patch\.title/)
     assert.match(mod, /page\.content = patch\.content/)
     assert.doesNotMatch(mod, /archive\.mspa\.story\[id\]\s*=/)

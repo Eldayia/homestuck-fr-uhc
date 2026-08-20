@@ -36,11 +36,13 @@ Le générateur produit :
 
 ```text
 generated/<nom>/
+├── compatibility.json
+├── CREDITS.txt
 ├── mod.js
 └── translation.json
 ```
 
-`translation.json` est indexé par `uhcMspaId`. `mod.js` charge ce fichier avec l'API du mod UHC et applique uniquement les propriétés explicitement présentes.
+`translation.json` est indexé par `uhcMspaId`. `mod.js` charge ce fichier avec l'API du mod UHC et applique uniquement les propriétés explicitement présentes. `compatibility.json` distingue la cible envisagée des versions réellement testées et ne déclare encore aucune version minimale.
 
 ## Portée actuelle
 

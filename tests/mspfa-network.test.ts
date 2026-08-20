@@ -1,5 +1,5 @@
 import assert from "node:assert/strict"
-import { mkdtemp, readFile, rm } from "node:fs/promises"
+import { mkdtemp, readFile, readdir, rm } from "node:fs/promises"
 import { tmpdir } from "node:os"
 import { join, resolve } from "node:path"
 import test from "node:test"
@@ -158,6 +158,24 @@ test("interrompt une requête trop lente et refuse une réponse trop volumineuse
       minimumIntervalMs: 0,
       fetchImplementation: oversizedFetch,
     }).load(), /trop volumineuse/)
+  } finally {
+    await rm(directory, { recursive: true, force: true })
+  }
+})
+
+test("valide une récupération en dry-run sans écrire le cache", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "hsfr-network-dry-"))
+  const raw = await readFile(fixturePath, "utf8")
+  try {
+    const snapshot = await new MspfaNetworkSource({
+      adventureId: "99999",
+      cacheDirectory: directory,
+      minimumIntervalMs: 0,
+      writeCache: false,
+      fetchImplementation: (async () => new Response(raw, { status: 200 })) as typeof fetch,
+    }).load()
+    assert.equal(snapshot.pages.length, 3)
+    assert.deepEqual(await readdir(directory), [])
   } finally {
     await rm(directory, { recursive: true, force: true })
   }

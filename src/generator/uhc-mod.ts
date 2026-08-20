@@ -1,8 +1,22 @@
-import { mkdir, writeFile } from "node:fs/promises"
+import { mkdir } from "node:fs/promises"
 import { join } from "node:path"
 
-import { stableStringify } from "../domain/hash.js"
 import type { CanonicalTranslationPage, GeneratedTranslation } from "../domain/types.js"
+import { writeStableJsonFile, writeTextFileAtomically } from "../io/write-json.js"
+
+export const MOD_VERSION = 1
+
+export const UHC_COMPATIBILITY = {
+  schemaVersion: 1,
+  integrationHook: "edit",
+  targetAppVersion: "2.8.1",
+  minimumAppVersion: null,
+  testedAppVersions: [] as string[],
+  manualValidationRequired: true,
+  usesVueHooks: false,
+  hasSettings: false,
+  preservesUnpatchedFields: true,
+} as const
 
 export function createTranslation(pages: CanonicalTranslationPage[]): GeneratedTranslation {
   const entries = pages
@@ -16,20 +30,18 @@ export function createTranslation(pages: CanonicalTranslationPage[]): GeneratedT
 
 export async function writeUhcMod(outputDirectory: string, translation: GeneratedTranslation): Promise<void> {
   await mkdir(outputDirectory, { recursive: true })
-  await writeFile(join(outputDirectory, "translation.json"), `${prettyStableJson(translation)}\n`, "utf8")
-  await writeFile(join(outputDirectory, "mod.js"), MOD_TEMPLATE, "utf8")
-}
-
-function prettyStableJson(value: unknown): string {
-  return JSON.stringify(JSON.parse(stableStringify(value)) as unknown, null, 2)
+  await writeStableJsonFile(join(outputDirectory, "translation.json"), translation)
+  await writeTextFileAtomically(join(outputDirectory, "mod.js"), MOD_TEMPLATE)
+  await writeStableJsonFile(join(outputDirectory, "compatibility.json"), UHC_COMPATIBILITY)
+  await writeTextFileAtomically(join(outputDirectory, "CREDITS.txt"), CREDITS_TEMPLATE)
 }
 
 const MOD_TEMPLATE = `module.exports = {
   title: "Homestuck FR",
   summary: "Traduction française communautaire pour UHC",
-  description: "Mod communautaire non officiel, généré localement.",
-  author: "Contributeurs Homestuck FR UHC",
-  modVersion: 1,
+  description: "Mod communautaire non officiel généré localement. Traduction et outils crédités dans CREDITS.txt.",
+  author: "Équipe de traduction française et contributeurs Homestuck FR UHC",
+  modVersion: ${MOD_VERSION},
   edit: true,
 
   computed(api) {
@@ -50,4 +62,22 @@ const MOD_TEMPLATE = `module.exports = {
     }
   }
 }
+`
+
+const CREDITS_TEMPLATE = `Homestuck FR — crédits
+
+Homestuck a été créé par Andrew Hussie.
+
+Traduction française : projet Homestuck en Français
+https://mspfa.com/?s=45546&p=1
+
+The Unofficial Homestuck Collection a été créé par Bambosh, est maintenu
+par GiovanH et a reçu les contributions de sa communauté.
+https://github.com/GiovanH/unofficial-homestuck-collection
+
+Intégration technique Homestuck FR UHC :
+https://github.com/Eldayia/homestuck-fr-uhc
+
+Consulter CREDITS.md et NOTICE dans le dépôt des outils pour les crédits
+détaillés et les limites juridiques. Ce mod est non officiel.
 `

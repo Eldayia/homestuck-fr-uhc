@@ -15,6 +15,8 @@ import { runUpdate } from "../update/update-workflow.js"
 import { proposeMappings, validateMappingSet } from "../mapper/propose-mappings.js"
 import { buildUhcReference, readUhcReference } from "../mapper/uhc-reference.js"
 import { createMappingReviewReport } from "../mapper/review-report.js"
+import { createProjectStatus, renderProjectStatus } from "../status/project-status.js"
+import { exitCodeForError } from "./exit-codes.js"
 
 interface CliOptions {
   source: string
@@ -32,22 +34,32 @@ interface CliOptions {
   reference?: string
   sampleSize: number
   dryRun: boolean
+  verbose: boolean
   adventure?: string
 }
 
 async function main(argv: string[]): Promise<void> {
   const [command, ...optionArguments] = argv
-  if (command === undefined || command === "help" || command === "--help") {
+  if (command === undefined || command === "--help") {
     printHelp()
+    return
+  }
+  if (command === "help") {
+    printHelp(optionArguments[0])
+    return
+  }
+  if (optionArguments.includes("--help")) {
+    printHelp(command)
     return
   }
 
   const options = parseOptions(command, optionArguments)
+  if (options.verbose) console.error(`[DETAIL] commande=${command}; contenu des pages masqué`)
 
   if (command === "import") {
     const snapshot = await new MspfaSnapshotSource(options.source, options.adventure).load()
-    await writeStableJsonFile(options.out, snapshot)
-    console.log(`[OK] Snapshot MSPFA ${snapshot.adventureId}: ${snapshot.pages.length} pages importées dans ${options.out}`)
+    if (!options.dryRun) await writeStableJsonFile(options.out, snapshot)
+    console.log(`[OK] Snapshot MSPFA ${snapshot.adventureId}: ${snapshot.pages.length} pages validées${writeSuffix(options)}`)
     return
   }
 
@@ -62,24 +74,25 @@ async function main(argv: string[]): Promise<void> {
       timeoutMs: options.timeoutMs,
       retries: options.retries,
       minimumIntervalMs: options.minimumIntervalMs,
+      writeCache: !options.dryRun,
     }).load()
-    await writeStableJsonFile(options.out, snapshot)
+    if (!options.dryRun) await writeStableJsonFile(options.out, snapshot)
     const mode = options.offline ? "cache hors ligne" : "MSPFA"
-    console.log(`[OK] Snapshot ${snapshot.adventureId}: ${snapshot.pages.length} pages chargées depuis ${mode} dans ${options.out}`)
+    console.log(`[OK] Snapshot ${snapshot.adventureId}: ${snapshot.pages.length} pages chargées depuis ${mode}${writeSuffix(options)}`)
     return
   }
 
-  if (command === "update") {
+  if (command === "update" || command === "diff") {
     if (!optionArguments.includes("--source")) {
-      throw new InputValidationError("La commande update exige --source <snapshot.json>")
+      throw new InputValidationError(`La commande ${command} exige --source <snapshot.json>`)
     }
     const result = await runUpdate({
       source: new LocalJsonSource(options.source),
       statePath: options.state,
       reportPath: options.report,
-      dryRun: options.dryRun,
+      dryRun: command === "diff" || options.dryRun,
     })
-    if (options.dryRun) console.log(result.report)
+    if (command === "diff" || options.dryRun) console.log(result.report)
     else console.log(`[OK] État mis à jour: ${result.diff.new.length} nouvelles, ${result.diff.updated.length} modifiées, ${result.diff.missing.length} absentes`)
     return
   }
@@ -89,8 +102,8 @@ async function main(argv: string[]): Promise<void> {
       throw new InputValidationError("La commande uhc-index exige --source <mspa.json>")
     }
     const reference = await buildUhcReference(options.source)
-    await writeStableJsonFile(options.out, reference)
-    console.log(`[OK] Index UHC sans texte: ${reference.pages.length} pages écrites dans ${options.out}`)
+    if (!options.dryRun) await writeStableJsonFile(options.out, reference)
+    console.log(`[OK] Index UHC sans texte: ${reference.pages.length} pages analysées${writeSuffix(options)}`)
     return
   }
 
@@ -104,11 +117,11 @@ async function main(argv: string[]): Promise<void> {
       options.reference === undefined ? Promise.resolve(undefined) : readUhcReference(options.reference),
     ])
     const proposals = proposeMappings(snapshot, mappings, reference)
-    await writeStableJsonFile(options.out, proposals)
+    if (!options.dryRun) await writeStableJsonFile(options.out, proposals)
     const conflicts = proposals.proposals.filter((proposal) => proposal.status === "conflict").length
     const unresolved = proposals.proposals.filter((proposal) => proposal.status === "unresolved").length
     const stale = proposals.proposals.filter((proposal) => proposal.status === "stale").length
-    console.log(`[OK] ${proposals.proposals.length} pages analysées: ${conflicts} conflits, ${stale} obsolètes, ${unresolved} sans candidat`)
+    console.log(`[OK] ${proposals.proposals.length} pages analysées: ${conflicts} conflits, ${stale} obsolètes, ${unresolved} sans candidat${writeSuffix(options)}`)
     return
   }
 
@@ -123,8 +136,22 @@ async function main(argv: string[]): Promise<void> {
     ])
     const proposals = proposeMappings(snapshot, mappings, reference)
     const review = createMappingReviewReport(snapshot, proposals, options.sampleSize)
-    await writeTextFileAtomically(options.out, review.markdown)
-    console.log(`[OK] Rapport de revue sans texte: ${review.entries.length} pages écrites dans ${options.out}`)
+    if (!options.dryRun) await writeTextFileAtomically(options.out, review.markdown)
+    console.log(`[OK] Rapport de revue sans texte: ${review.entries.length} pages sélectionnées${writeSuffix(options)}`)
+    return
+  }
+
+  if (command === "status") {
+    if (!optionArguments.includes("--source")) {
+      throw new InputValidationError("La commande status exige --source <snapshot.json>")
+    }
+    const [snapshot, mappings, overrides, reference] = await Promise.all([
+      new LocalJsonSource(options.source).load(),
+      readMappings(options.mapping),
+      readOverrides(options.overrides),
+      options.reference === undefined ? Promise.resolve(undefined) : readUhcReference(options.reference),
+    ])
+    console.log(renderProjectStatus(createProjectStatus(snapshot, mappings, overrides.length, reference)))
     return
   }
 
@@ -157,8 +184,10 @@ async function main(argv: string[]): Promise<void> {
   })
 
   if (command === "build") {
-    await writeUhcMod(options.out, result.translation)
-    console.log(`[OK] ${result.pages.length} pages générées dans ${options.out}`)
+    if (!options.dryRun) await writeUhcMod(options.out, result.translation)
+    console.log(options.dryRun
+      ? `[OK] ${result.pages.length} pages générables${writeSuffix(options)}`
+      : `[OK] ${result.pages.length} pages générées ; sortie: ${options.out}`)
   } else {
     console.log(`[OK] ${result.pages.length} pages validées`)
   }
@@ -183,6 +212,7 @@ function parseOptions(command: string, arguments_: string[]): CliOptions {
     "reference",
     "sample-size",
     "dry-run",
+    "verbose",
   ])
   for (let index = 0; index < arguments_.length; index += 2) {
     const key = arguments_[index]
@@ -226,6 +256,7 @@ function parseOptions(command: string, arguments_: string[]): CliOptions {
     report: resolve(values.get("report") ?? `reports/update-${new Date().toISOString().slice(0, 10)}.md`),
     sampleSize: parseIntegerOption(values.get("sample-size") ?? "20", "sample-size", 1),
     dryRun: parseBooleanOption(values.get("dry-run") ?? "false", "dry-run"),
+    verbose: parseBooleanOption(values.get("verbose") ?? "false", "verbose"),
   }
   const adventure = values.get("adventure")
   if (adventure !== undefined) options.adventure = adventure
@@ -234,11 +265,20 @@ function parseOptions(command: string, arguments_: string[]): CliOptions {
   return options
 }
 
-function printHelp(): void {
+function printHelp(command?: string): void {
+  if (command !== undefined) {
+    const help = COMMAND_HELP[command]
+    if (help === undefined) throw new InputValidationError(`Commande inconnue pour l'aide: ${command}`)
+    console.log(help)
+    return
+  }
   console.log(`Usage:
+  hsfr help <commande>
   hsfr import   --source export-mspfa.json [--adventure id] [--out snapshot.json]
   hsfr fetch    --adventure id [--cache dossier] [--offline true|false] [--out snapshot.json]
   hsfr update   --source snapshot.json [--state fichier] [--report fichier] [--dry-run true|false]
+  hsfr diff     --source snapshot.json [--state fichier]
+  hsfr status   --source snapshot.json [--mapping pages.json] [--overrides overrides.json] [--reference reference.json]
   hsfr uhc-index --source mspa.json [--out reference.json]
   hsfr mapping-propose --source snapshot.json [--mapping pages.json] [--reference reference.json] [--out propositions.json]
   hsfr mapping-review  --source snapshot.json [--mapping pages.json] [--reference reference.json] [--sample-size 20] [--out revue.md]
@@ -247,7 +287,39 @@ function printHelp(): void {
   hsfr build    [--source fichier] [--mapping fichier] [--overrides fichier] [--out dossier]
   hsfr package  [--policy fichier]
 
-La source par défaut contient uniquement des fixtures artificielles.`)
+Options communes d'écriture: --dry-run true|false, --verbose true|false.
+Utiliser "hsfr help <commande>" pour un exemple. La source par défaut contient uniquement des fixtures artificielles.`)
+}
+
+const COMMAND_HELP: Record<string, string> = {
+  import: `hsfr import --source export-mspfa.json [--adventure id] [--out snapshot.json] [--dry-run true]
+Exemple: hsfr import --source export.json --adventure 45546 --out .cache/imports/fr.json`,
+  fetch: `hsfr fetch --adventure id [--cache dossier] [--offline true|false] [--out snapshot.json] [--dry-run true]
+Exemple: hsfr fetch --adventure 45546 --offline true --out .cache/imports/fr.json`,
+  update: `hsfr update --source snapshot.json [--state fichier] [--report fichier] [--dry-run true]
+Exemple: hsfr update --source .cache/imports/fr.json --state data/metadata/source-state.json`,
+  diff: `hsfr diff --source snapshot.json [--state fichier]
+Exemple: hsfr diff --source .cache/imports/fr.json --state data/metadata/source-state.json`,
+  status: `hsfr status --source snapshot.json [--mapping pages.json] [--overrides overrides.json] [--reference reference.json]
+Exemple: hsfr status --source .cache/imports/fr.json --mapping data/mapping/pages.json`,
+  "uhc-index": `hsfr uhc-index --source mspa.json [--out reference.json] [--dry-run true]
+Exemple: hsfr uhc-index --source archive/data/mspa.json --out .cache/uhc/reference.json`,
+  "mapping-propose": `hsfr mapping-propose --source snapshot.json [--mapping pages.json] [--reference reference.json] [--out propositions.json] [--dry-run true]
+Exemple: hsfr mapping-propose --source .cache/imports/fr.json --mapping data/mapping/pages.json`,
+  "mapping-review": `hsfr mapping-review --source snapshot.json [--mapping pages.json] [--reference reference.json] [--sample-size 20] [--out revue.md] [--dry-run true]
+Exemple: hsfr mapping-review --source .cache/imports/fr.json --sample-size 20`,
+  "mapping-status": `hsfr mapping-status [--mapping pages.json]
+Exemple: hsfr mapping-status --mapping data/mapping/pages.json`,
+  validate: `hsfr validate --source snapshot.json --mapping pages.json --overrides overrides.json
+Exemple: hsfr validate --source .cache/imports/fr.json --mapping data/mapping/pages.json`,
+  build: `hsfr build --source snapshot.json --mapping pages.json --overrides overrides.json [--out dossier] [--dry-run true]
+Exemple: hsfr build --source .cache/imports/fr.json --out generated/homestuck-fr`,
+  package: `hsfr package [--policy fichier]
+Exemple: hsfr package --policy data/metadata/distribution-policy.json`,
+}
+
+function writeSuffix(options: CliOptions): string {
+  return options.dryRun ? " (dry-run ; aucune écriture)" : ` ; sortie: ${options.out}`
 }
 
 function parseIntegerOption(value: string, label: string, minimum: number): number {
@@ -268,7 +340,7 @@ function parseBooleanOption(value: string, label: string): boolean {
 main(process.argv.slice(2)).catch((error: unknown) => {
   if (error instanceof HsfrError) {
     console.error(`[${error.code}] ${error.message}`)
-    process.exitCode = 1
+    process.exitCode = exitCodeForError(error)
     return
   }
   console.error(error)

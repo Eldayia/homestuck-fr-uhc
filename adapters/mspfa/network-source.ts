@@ -20,6 +20,7 @@ export interface MspfaNetworkSourceOptions {
   fetchImplementation?: typeof fetch
   sleep?: (milliseconds: number) => Promise<void>
   now?: () => number
+  writeCache?: boolean
 }
 
 export class MspfaNetworkSource implements TranslationSource {
@@ -51,8 +52,8 @@ export class MspfaNetworkSource implements TranslationSource {
       }
     }
 
-    await mkdir(this.options.cacheDirectory, { recursive: true })
-    await this.respectMinimumInterval()
+    if (this.options.writeCache !== false) await mkdir(this.options.cacheDirectory, { recursive: true })
+    await this.respectMinimumInterval(this.options.writeCache !== false)
     const rawText = await this.fetchWithRetries()
 
     let raw: unknown
@@ -63,18 +64,20 @@ export class MspfaNetworkSource implements TranslationSource {
     }
 
     const snapshot = parseMspfaSnapshot(raw, this.options.adventureId)
-    await writeFileAtomically(rawPath, rawText)
-    await writeStableJsonFile(this.metadataPath(), {
-      schemaVersion: 1,
-      adventureId: this.options.adventureId,
-      endpoint: DEFAULT_ENDPOINT,
-      fetchedAt: new Date(this.now()).toISOString(),
-      sourceRevision: snapshot.sourceRevision ?? null,
-    })
+    if (this.options.writeCache !== false) {
+      await writeFileAtomically(rawPath, rawText)
+      await writeStableJsonFile(this.metadataPath(), {
+        schemaVersion: 1,
+        adventureId: this.options.adventureId,
+        endpoint: DEFAULT_ENDPOINT,
+        fetchedAt: new Date(this.now()).toISOString(),
+        sourceRevision: snapshot.sourceRevision ?? null,
+      })
+    }
     return snapshot
   }
 
-  private async respectMinimumInterval(): Promise<void> {
+  private async respectMinimumInterval(writeState: boolean): Promise<void> {
     const minimumIntervalMs = this.options.minimumIntervalMs ?? 60_000
     let lastRequestAt = 0
     try {
@@ -88,10 +91,12 @@ export class MspfaNetworkSource implements TranslationSource {
 
     const waitMs = Math.max(0, lastRequestAt + minimumIntervalMs - this.now())
     if (waitMs > 0) await this.sleep(waitMs)
-    await writeStableJsonFile(this.requestStatePath(), {
-      schemaVersion: 1,
-      lastRequestAt: new Date(this.now()).toISOString(),
-    })
+    if (writeState) {
+      await writeStableJsonFile(this.requestStatePath(), {
+        schemaVersion: 1,
+        lastRequestAt: new Date(this.now()).toISOString(),
+      })
+    }
   }
 
   private async fetchWithRetries(): Promise<string> {

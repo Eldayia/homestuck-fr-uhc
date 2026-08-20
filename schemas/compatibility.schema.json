@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Eldayia/homestuck-fr-uhc/schemas/compatibility.schema.json",
+  "title": "Homestuck FR UHC compatibility declaration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "integrationHook",
+    "targetAppVersion",
+    "minimumAppVersion",
+    "testedAppVersions",
+    "manualValidationRequired",
+    "usesVueHooks",
+    "hasSettings",
+    "preservesUnpatchedFields"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "integrationHook": { "enum": ["edit", "editPage"] },
+    "targetAppVersion": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "minimumAppVersion": {
+      "anyOf": [
+        { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+        { "type": "null" }
+      ]
+    },
+    "testedAppVersions": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" }
+    },
+    "manualValidationRequired": { "type": "boolean" },
+    "usesVueHooks": { "type": "boolean" },
+    "hasSettings": { "type": "boolean" },
+    "preservesUnpatchedFields": { "type": "boolean" }
+  }
+}
