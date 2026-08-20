@@ -108,3 +108,32 @@ export interface PipelineResult {
   pages: CanonicalTranslationPage[]
   translation: GeneratedTranslation
 }
+
+export interface SourceStatePage {
+  pageNumber: number
+  rawHash: string
+  normalizedHash: string
+  modifiedAt?: string
+}
+
+export interface SourceState {
+  schemaVersion: 1
+  provider: string
+  adventureId: string
+  sourceRevision?: string
+  generatedAt: string
+  pages: SourceStatePage[]
+}
+
+export interface SourceDiff {
+  unchanged: number[]
+  metadataOnly: number[]
+  updated: number[]
+  new: number[]
+  missing: number[]
+  movedCandidates: Array<{
+    from: number
+    to: number
+    normalizedHash: string
+  }>
+}

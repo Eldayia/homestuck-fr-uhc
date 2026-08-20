@@ -45,4 +45,6 @@ Le parser accepte un sous-ensemble volontairement restreint du BBCode : emphase,
 
 Les fixtures du pipeline couvrent dix formes artificielles. Une fixture supplémentaire reproduit la structure compacte MSPFA sans reprendre de contenu réel. L'adaptateur MSPFA local convertit cette structure vers un snapshot versionné, élimine le JavaScript et le CSS personnalisés, puis écrit uniquement dans un emplacement choisi par l'utilisateur — `.cache/` par défaut.
 
-L'accès réseau est isolé dans `adapters/mspfa/network-source.ts` et ne constitue pas une dépendance du cœur. La normalisation exhaustive du BBCode réel et les mises à jour différentielles restent hors de la portée actuelle.
+L'accès réseau est isolé dans `adapters/mspfa/network-source.ts` et ne constitue pas une dépendance du cœur. La normalisation exhaustive du BBCode réel et la récupération réseau différentielle restent hors de la portée actuelle.
+
+Le module `src/update/` compare deux états par hash. Il ne dépend pas du mapping UHC et ne stocke aucun texte dans `source-state.json`. Les changements de position sont seulement proposés comme déplacements possibles et restent soumis à une revue humaine.

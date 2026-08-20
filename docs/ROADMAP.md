@@ -22,7 +22,7 @@ Cette feuille de route transforme le plan général en étapes vérifiables. Les
 | 1 | Socle et vertical slice artificiel | ✅ | M1 — preuve technique |
 | 2 | Cadre juridique et gouvernance | 🟡 | M2 — MVP juridiquement sûr |
 | 3 | Adaptateur MSPFA et import local | ✅ | M2 — MVP juridiquement sûr |
-| 4 | Snapshots et mises à jour incrémentales | ⬜ | M2 — MVP juridiquement sûr |
+| 4 | Snapshots et mises à jour incrémentales | ✅ | M2 — MVP juridiquement sûr |
 | 5 | Mapping MSPFA ↔ Homestuck ↔ UHC | ⬜ | M3 — alpha locale |
 | 6 | Parser et normalisation du contenu réel | ⬜ | M3 — alpha locale |
 | 7 | Intégration et compatibilité UHC | ⬜ | M3 — alpha locale |
@@ -169,22 +169,22 @@ Un mod prêt à installer contenant la traduction ne pourra être publié qu'apr
 
 **Critère de sortie :** un snapshot réel peut être obtenu ou fourni localement, puis validé, sans dépendance du cœur à MSPFA. **Atteint avec tests synthétiques ; aucun corpus réel n'est versionné.**
 
-## Phase 4 — Snapshots et mises à jour incrémentales ⬜
+## Phase 4 — Snapshots et mises à jour incrémentales ✅
 
-- [ ] Définir `data/metadata/source-state.json` sans texte traduit.
-- [ ] Calculer un hash brut et un hash normalisé par page.
-- [ ] Conserver la date source lorsqu'elle existe.
-- [ ] Détecter `unchanged`, `updated`, `new` et `missing`.
-- [ ] Détecter une réorganisation du tableau MSPFA.
-- [ ] Ne pas considérer la position seule comme identité stable.
-- [ ] Ajouter `hsfr update --dry-run`.
-- [ ] Ajouter `hsfr update` avec écriture atomique.
-- [ ] Ne modifier l'état qu'après validation complète.
-- [ ] Conserver le dernier état utilisable en cas d'échec.
-- [ ] Tester deux snapshots successifs artificiels.
-- [ ] Tester insertion, suppression, modification et réapparition d'une page.
+- [x] Définir le format `data/metadata/source-state.json` sans texte traduit.
+- [x] Calculer un hash brut et un hash normalisé par page.
+- [x] Conserver la date source lorsqu'elle existe.
+- [x] Détecter `unchanged`, `metadataOnly`, `updated`, `new` et `missing`.
+- [x] Détecter une réorganisation possible du tableau MSPFA.
+- [x] Ne pas considérer la position seule comme identité stable.
+- [x] Ajouter `hsfr update --dry-run`.
+- [x] Ajouter `hsfr update` avec écriture atomique.
+- [x] Ne modifier l'état qu'après validation complète.
+- [x] Conserver le dernier état utilisable en cas d'échec.
+- [x] Tester deux snapshots successifs artificiels.
+- [x] Tester insertion, suppression, modification et réapparition d'une page.
 
-**Critère de sortie :** une mise à jour indique exactement ce qui a changé et ne détruit jamais l'état précédent sur erreur.
+**Critère de sortie :** une mise à jour indique exactement ce qui a changé et ne détruit jamais l'état précédent sur erreur. **Atteint avec tests synthétiques.**
 
 ## Phase 5 — Mapping MSPFA ↔ Homestuck ↔ UHC ⬜
 
@@ -321,7 +321,7 @@ Un mod prêt à installer contenant la traduction ne pourra être publié qu'apr
 
 - [ ] Compléter le README avec installation et limitations.
 - [x] Créer `docs/TRANSLATION_SOURCE.md`.
-- [ ] Créer `docs/UPDATE_WORKFLOW.md`.
+- [x] Créer `docs/UPDATE_WORKFLOW.md`.
 - [ ] Créer `CONTRIBUTING.md`.
 - [ ] Créer la checklist de release.
 - [ ] Expliquer comment corriger un mapping.

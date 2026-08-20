@@ -11,6 +11,7 @@ import { readDistributionPolicy, readMappings, readOverrides } from "../io/confi
 import { writeStableJsonFile } from "../io/write-json.js"
 import { runPipeline } from "../pipeline/build-pipeline.js"
 import { assertContentDistributionAllowed } from "../policy/distribution.js"
+import { runUpdate } from "../update/update-workflow.js"
 
 interface CliOptions {
   source: string
@@ -23,6 +24,9 @@ interface CliOptions {
   timeoutMs: number
   retries: number
   minimumIntervalMs: number
+  state: string
+  report: string
+  dryRun: boolean
   adventure?: string
 }
 
@@ -57,6 +61,21 @@ async function main(argv: string[]): Promise<void> {
     await writeStableJsonFile(options.out, snapshot)
     const mode = options.offline ? "cache hors ligne" : "MSPFA"
     console.log(`[OK] Snapshot ${snapshot.adventureId}: ${snapshot.pages.length} pages chargées depuis ${mode} dans ${options.out}`)
+    return
+  }
+
+  if (command === "update") {
+    if (!optionArguments.includes("--source")) {
+      throw new InputValidationError("La commande update exige --source <snapshot.json>")
+    }
+    const result = await runUpdate({
+      source: new LocalJsonSource(options.source),
+      statePath: options.state,
+      reportPath: options.report,
+      dryRun: options.dryRun,
+    })
+    if (options.dryRun) console.log(result.report)
+    else console.log(`[OK] État mis à jour: ${result.diff.new.length} nouvelles, ${result.diff.updated.length} modifiées, ${result.diff.missing.length} absentes`)
     return
   }
 
@@ -102,6 +121,9 @@ function parseOptions(command: string, arguments_: string[]): CliOptions {
     "timeout-ms",
     "retries",
     "minimum-interval-ms",
+    "state",
+    "report",
+    "dry-run",
   ])
   for (let index = 0; index < arguments_.length; index += 2) {
     const key = arguments_[index]
@@ -131,6 +153,9 @@ function parseOptions(command: string, arguments_: string[]): CliOptions {
     timeoutMs: parseIntegerOption(values.get("timeout-ms") ?? "30000", "timeout-ms", 1),
     retries: parseIntegerOption(values.get("retries") ?? "2", "retries", 0),
     minimumIntervalMs: parseIntegerOption(values.get("minimum-interval-ms") ?? "60000", "minimum-interval-ms", 0),
+    state: resolve(values.get("state") ?? "data/metadata/source-state.json"),
+    report: resolve(values.get("report") ?? `reports/update-${new Date().toISOString().slice(0, 10)}.md`),
+    dryRun: parseBooleanOption(values.get("dry-run") ?? "false", "dry-run"),
   }
   const adventure = values.get("adventure")
   if (adventure !== undefined) options.adventure = adventure
@@ -141,6 +166,7 @@ function printHelp(): void {
   console.log(`Usage:
   hsfr import   --source export-mspfa.json [--adventure id] [--out snapshot.json]
   hsfr fetch    --adventure id [--cache dossier] [--offline true|false] [--out snapshot.json]
+  hsfr update   --source snapshot.json [--state fichier] [--report fichier] [--dry-run true|false]
   hsfr validate [--source fichier] [--mapping fichier] [--overrides fichier]
   hsfr build    [--source fichier] [--mapping fichier] [--overrides fichier] [--out dossier]
   hsfr package  [--policy fichier]

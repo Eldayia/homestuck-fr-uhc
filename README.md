@@ -68,6 +68,16 @@ Relire le dernier cache sans aucun accès réseau :
 npm run hsfr -- fetch --adventure 45546 --offline true
 ```
 
+Prévisualiser une mise à jour sans écrire :
+
+```bash
+npm run hsfr -- update \
+  --source .cache/imports/homestuck-fr.json \
+  --dry-run true
+```
+
+Voir [le workflow de mise à jour](./docs/UPDATE_WORKFLOW.md) pour l'état persistant et les rapports.
+
 ## Licence
 
 Aucune licence de code n'a encore été choisie : `package.json` porte donc la valeur `UNLICENSED`. Aucun code provenant d'UHC ou d'un autre mod n'est copié dans ce dépôt. Les options sont présentées dans [la décision de licence](./docs/LICENSING_DECISION.md).
